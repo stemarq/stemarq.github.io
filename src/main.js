@@ -42,6 +42,13 @@ document.querySelectorAll('.reveal-words').forEach((el) => {
     .join(' ');
 });
 
+/* ---------- Relógio de SP ---------- */
+const clockEl = document.getElementById('clock');
+const tickClock = () =>
+  (clockEl.textContent = new Date().toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' }));
+tickClock();
+setInterval(tickClock, 15000);
+
 // os gatilhos do blob são criados antes do pin dos projetos: reordenar para os cálculos considerarem o pin
 ScrollTrigger.sort();
 window.addEventListener('load', () => ScrollTrigger.refresh());
