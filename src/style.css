@@ -40,3 +40,42 @@ img { display: block; max-width: 100%; }
 
 body.has-cursor, body.has-cursor a, body.has-cursor button { cursor: none; }
 
+/* ---------- Nav ---------- */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  padding: 20px var(--pad);
+  transition: transform 0.6s var(--ease), background 0.4s;
+}
+.scrolled .nav { background: rgba(10, 5, 16, 0.86); } /* sem backdrop-filter: o blur sobre o WebGL era refeito a cada quadro */
+.nav-hidden .nav { transform: translateY(-110%); }
+.menu-open .nav { transform: none; }
+.nav__logo { font-family: var(--display); font-size: 28px; letter-spacing: 0.02em; display: inline-block; }
+.nav__logo sup { font-size: 10px; color: var(--acid); }
+.nav__links { display: flex; gap: 32px; }
+.nav__links a { position: relative; display: inline-block; overflow: hidden; height: 1.5em; }
+.nav__links a::after {
+  content: attr(data-hover); position: absolute; left: 0; top: 100%; color: var(--acid);
+}
+.nav__links a, .nav__links a::after { transition: transform 0.5s var(--ease); }
+.nav__links a:hover { color: transparent; }
+.nav__links a:hover::after { transform: translateY(-100%); }
+.nav__links a { transition: color 0s 0.1s; }
+.nav__status { display: flex; align-items: center; gap: 10px; color: var(--muted); }
+.pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--acid); position: relative; }
+.pulse::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--acid); animation: pulse 1.8s infinite; }
+@keyframes pulse { to { transform: scale(3); opacity: 0; } }
+.nav__menu { display: none; width: 40px; height: 40px; position: relative; }
+.nav__menu span { position: absolute; left: 8px; right: 8px; height: 2px; background: var(--ink); transition: transform 0.4s var(--ease); }
+.nav__menu span:first-child { top: 15px; } .nav__menu span:last-child { top: 23px; }
+.menu-open .nav__menu span:first-child { transform: translateY(4px) rotate(45deg); }
+.menu-open .nav__menu span:last-child { transform: translateY(-4px) rotate(-45deg); }
+.mobile-menu {
+  position: fixed; inset: 0; z-index: 99; background: var(--bg-2);
+  display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: var(--pad);
+  clip-path: circle(0% at calc(100% - 36px) 40px); transition: clip-path 0.8s var(--ease);
+}
+.mobile-menu a { font-family: var(--display); font-size: 16vw; line-height: 1; text-transform: uppercase; }
+.mobile-menu a:active { color: var(--acid); }
+.menu-open .mobile-menu { clip-path: circle(150% at calc(100% - 36px) 40px); }
+
