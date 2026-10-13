@@ -62,6 +62,27 @@ lenis.on('scroll', ({ scroll }) => {
 });
 document.getElementById('menuBtn').addEventListener('click', () => document.body.classList.toggle('menu-open'));
 
+/* ---------- Marquee com velocidade do scroll ---------- */
+const marquee = document.getElementById('marquee');
+marquee.innerHTML += marquee.innerHTML;
+let mx = 0, mSpeed = 1;
+lenis.on('scroll', ({ velocity }) => (mSpeed = 1 + Math.abs(velocity) * 0.25 * Math.sign(velocity || 1)));
+let mW = 0, mOn = true;
+const measureMarquee = () => (mW = marquee.scrollWidth / 2);
+measureMarquee();
+window.addEventListener('resize', measureMarquee);
+document.fonts?.ready.then(measureMarquee);
+new IntersectionObserver(([e]) => (mOn = e.isIntersecting)).observe(marquee);
+gsap.ticker.add(() => {
+  if (!mOn) return; // fora da tela: não anima
+  mx -= mSpeed * 0.9;
+  mSpeed += (1 - mSpeed) * 0.05;
+  const w = mW;
+  if (mx <= -w) mx += w;
+  if (mx > 0) mx -= w;
+  marquee.style.transform = `translate3d(${mx}px,0,0)`;
+});
+
 // os gatilhos do blob são criados antes do pin dos projetos: reordenar para os cálculos considerarem o pin
 ScrollTrigger.sort();
 window.addEventListener('load', () => ScrollTrigger.refresh());
