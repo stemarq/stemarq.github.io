@@ -1,6 +1,7 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
+import { initScene } from './scene.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -40,6 +41,17 @@ document.querySelectorAll('.reveal-words').forEach((el) => {
     .split(/\s+/)
     .map((w) => `<span class="w">${w}</span>`)
     .join(' ');
+});
+
+/* ---------- Cena 3D ---------- */
+const isMobile = window.innerWidth < 900;
+const scene3d = initScene(document.getElementById('gl'), isMobile);
+
+/* ---------- Cena 3D: progresso da página ---------- */
+ScrollTrigger.create({
+  start: 0,
+  end: 'max',
+  onUpdate: (s) => (scene3d.scroll = s.progress),
 });
 
 /* ---------- Relógio de SP ---------- */
