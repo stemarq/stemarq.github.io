@@ -51,6 +51,22 @@ body.has-cursor, body.has-cursor a, body.has-cursor button { cursor: none; }
   50% { transform: translate(2%, -3%); } 75% { transform: translate(-2%, -1%); }
 }
 
+/* ---------- Cursor ---------- */
+.cursor, .cursor-dot { position: fixed; top: 0; left: 0; z-index: 150; pointer-events: none; display: none; }
+.has-cursor .cursor, .has-cursor .cursor-dot { display: block; }
+.cursor {
+  width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%;
+  border: 1px solid rgba(242, 233, 255, 0.5);
+  display: grid; place-items: center;
+  transition: width 0.4s var(--ease), height 0.4s var(--ease), margin 0.4s var(--ease), background 0.3s, border-color 0.3s;
+}
+.cursor-dot { width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: var(--acid); }
+.cursor.is-link { width: 64px; height: 64px; margin: -32px 0 0 -32px; background: rgba(214, 255, 61, 0.12); border-color: var(--acid); }
+.cursor.is-label { width: 96px; height: 96px; margin: -48px 0 0 -48px; background: var(--acid); border-color: var(--acid); }
+.cursor__label { font-family: var(--mono); font-size: 11px; text-transform: uppercase; color: var(--bg); font-weight: 500; opacity: 0; transition: opacity 0.2s; text-align: center; }
+.cursor.is-label .cursor__label { opacity: 1; }
+.cursor.is-label ~ .cursor-dot { opacity: 0; }
+
 /* ---------- Nav ---------- */
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;

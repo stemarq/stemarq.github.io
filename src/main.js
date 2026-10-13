@@ -83,6 +83,45 @@ gsap.ticker.add(() => {
   marquee.style.transform = `translate3d(${mx}px,0,0)`;
 });
 
+/* ---------- Cursor custom + magnetismo ---------- */
+if (finePointer) {
+  document.body.classList.add('has-cursor');
+  const cursor = document.getElementById('cursor');
+  const dot = document.getElementById('cursorDot');
+  const label = document.getElementById('cursorLabel');
+  const cx = gsap.quickTo(cursor, 'x', { duration: 0.45, ease: 'power3' });
+  const cy = gsap.quickTo(cursor, 'y', { duration: 0.45, ease: 'power3' });
+  const dx = gsap.quickTo(dot, 'x', { duration: 0.08 });
+  const dy = gsap.quickTo(dot, 'y', { duration: 0.08 });
+  window.addEventListener('pointermove', (e) => {
+    cx(e.clientX); cy(e.clientY); dx(e.clientX); dy(e.clientY);
+  });
+
+  document.addEventListener('pointerover', (e) => {
+    const withLabel = e.target.closest('[data-cursor]');
+    const link = e.target.closest('a, button');
+    if (withLabel) {
+      label.textContent = withLabel.dataset.cursor;
+      cursor.className = 'cursor is-label';
+    } else if (link) {
+      cursor.className = 'cursor is-link';
+    } else {
+      cursor.className = 'cursor';
+    }
+  });
+
+  document.querySelectorAll('[data-magnetic]').forEach((el) => {
+    const xTo = gsap.quickTo(el, 'x', { duration: 0.6, ease: 'elastic.out(1,0.4)' });
+    const yTo = gsap.quickTo(el, 'y', { duration: 0.6, ease: 'elastic.out(1,0.4)' });
+    el.addEventListener('pointermove', (e) => {
+      const r = el.getBoundingClientRect();
+      xTo((e.clientX - r.left - r.width / 2) * 0.35);
+      yTo((e.clientY - r.top - r.height / 2) * 0.35);
+    });
+    el.addEventListener('pointerleave', () => { xTo(0); yTo(0); });
+  });
+}
+
 // os gatilhos do blob são criados antes do pin dos projetos: reordenar para os cálculos considerarem o pin
 ScrollTrigger.sort();
 window.addEventListener('load', () => ScrollTrigger.refresh());
