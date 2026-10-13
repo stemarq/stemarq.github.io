@@ -53,6 +53,15 @@ setInterval(tickClock, 15000);
 gsap.to('.hero__title .line:first-child', { xPercent: -12, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
 gsap.to('.hero__title .line--right', { xPercent: 10, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
 
+/* ---------- Nav esconde ao descer ---------- */
+let lastY = 0;
+lenis.on('scroll', ({ scroll }) => {
+  document.body.classList.toggle('nav-hidden', scroll > lastY && scroll > 200);
+  document.body.classList.toggle('scrolled', scroll > 50);
+  lastY = scroll;
+});
+document.getElementById('menuBtn').addEventListener('click', () => document.body.classList.toggle('menu-open'));
+
 // os gatilhos do blob são criados antes do pin dos projetos: reordenar para os cálculos considerarem o pin
 ScrollTrigger.sort();
 window.addEventListener('load', () => ScrollTrigger.refresh());
