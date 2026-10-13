@@ -49,6 +49,10 @@ const tickClock = () =>
 tickClock();
 setInterval(tickClock, 15000);
 
+/* ---------- Hero ao rolar ---------- */
+gsap.to('.hero__title .line:first-child', { xPercent: -12, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+gsap.to('.hero__title .line--right', { xPercent: 10, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+
 // os gatilhos do blob são criados antes do pin dos projetos: reordenar para os cálculos considerarem o pin
 ScrollTrigger.sort();
 window.addEventListener('load', () => ScrollTrigger.refresh());
