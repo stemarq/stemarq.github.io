@@ -124,6 +124,16 @@ gsap.utils.toArray('.section-tag').forEach((t) =>
   gsap.from(t, { opacity: 0, x: -30, duration: 0.8, ease: 'expo.out', scrollTrigger: { trigger: t, start: 'top 90%' } })
 );
 
+/* ---------- Sobre ---------- */
+gsap.fromTo(
+  '.about__lead .w',
+  { opacity: 0.12 },
+  { opacity: 1, stagger: 0.05, ease: 'none', scrollTrigger: { trigger: '.about__lead', start: 'top 80%', end: 'bottom 45%', scrub: true } }
+);
+gsap.fromTo('.about__photo-inner', { clipPath: 'inset(100% 0 0 0)' }, { clipPath: 'inset(0% 0 0 0)', duration: 1.4, ease: 'expo.inOut', scrollTrigger: { trigger: '.about__photo', start: 'top 80%' } });
+gsap.fromTo('.about__photo-inner img', { scale: 1.35 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '.about__photo', start: 'top bottom', end: 'bottom top', scrub: true } });
+gsap.from('.about__cols p, .stat', { y: 40, opacity: 0, stagger: 0.1, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: '.about__cols', start: 'top 85%' } });
+
 /* ---------- Cursor custom + magnetismo ---------- */
 if (finePointer) {
   document.body.classList.add('has-cursor');
