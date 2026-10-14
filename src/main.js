@@ -109,6 +109,21 @@ gsap.ticker.add(() => {
   marquee.style.transform = `translate3d(${mx}px,0,0)`;
 });
 
+/* ---------- Títulos grandes revelando ---------- */
+gsap.utils.toArray('.big-title, .contact__title').forEach((t) =>
+  gsap.from(t.querySelectorAll('.ch'), {
+    yPercent: 110,
+    duration: 1,
+    stagger: 0.025,
+    ease: 'expo.out',
+    scrollTrigger: { trigger: t, start: 'top 85%' },
+  })
+);
+
+gsap.utils.toArray('.section-tag').forEach((t) =>
+  gsap.from(t, { opacity: 0, x: -30, duration: 0.8, ease: 'expo.out', scrollTrigger: { trigger: t, start: 'top 90%' } })
+);
+
 /* ---------- Cursor custom + magnetismo ---------- */
 if (finePointer) {
   document.body.classList.add('has-cursor');
