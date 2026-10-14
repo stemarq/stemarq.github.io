@@ -47,6 +47,20 @@ document.querySelectorAll('.reveal-words').forEach((el) => {
 const isMobile = window.innerWidth < 900;
 const scene3d = initScene(document.getElementById('gl'), isMobile);
 
+/* ---------- Entrada (sem tela de carregamento) ---------- */
+gsap
+  .timeline({ delay: 0.1 })
+  .from('#gl', { opacity: 0, duration: 2, ease: 'power2.out' }, 0)
+  .from('.hero__title .ch', { yPercent: 115, rotate: 8, duration: 1.2, stagger: 0.04, ease: 'expo.out' }, 0.1)
+  .from('.hero__meta span, .hero__intro, .hero__scroll', { y: 30, opacity: 0, duration: 1, stagger: 0.08, ease: 'expo.out' }, 0.5)
+  .from('.nav', { yPercent: -100, opacity: 0, duration: 1, ease: 'expo.out', clearProps: 'transform,opacity' }, 0.3);
+
+// o blob nasce "explodindo" e se acalma
+scene3d.kick = 0.9;
+window.addEventListener('pointerdown', (e) => {
+  if (e.target.closest('.hero')) scene3d.kick = 0.45;
+});
+
 /* ---------- Cena 3D: progresso da página ---------- */
 ScrollTrigger.create({
   start: 0,
