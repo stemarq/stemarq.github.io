@@ -134,6 +134,18 @@ gsap.fromTo('.about__photo-inner', { clipPath: 'inset(100% 0 0 0)' }, { clipPath
 gsap.fromTo('.about__photo-inner img', { scale: 1.35 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '.about__photo', start: 'top bottom', end: 'bottom top', scrub: true } });
 gsap.from('.about__cols p, .stat', { y: 40, opacity: 0, stagger: 0.1, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: '.about__cols', start: 'top 85%' } });
 
+// Contadores
+document.querySelectorAll('[data-count]').forEach((el) => {
+  const o = { v: 0 };
+  gsap.to(o, {
+    v: +el.dataset.count,
+    duration: 2,
+    ease: 'expo.out',
+    scrollTrigger: { trigger: el, start: 'top 90%' },
+    onUpdate: () => (el.textContent = Math.round(o.v) + (el.dataset.suffix || '')),
+  });
+});
+
 /* ---------- Cursor custom + magnetismo ---------- */
 if (finePointer) {
   document.body.classList.add('has-cursor');
