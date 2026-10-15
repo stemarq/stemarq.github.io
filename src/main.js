@@ -2,11 +2,14 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { initScene } from './scene.js';
+import { renderFeatured } from './projects.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = window.matchMedia('(pointer: fine)').matches;
+
+renderFeatured(document.getElementById('projectsTrack'));
 
 /* ---------- Smooth scroll ---------- */
 const lenis = new Lenis({ lerp: 0.09, smoothWheel: !reduced });
@@ -157,6 +160,53 @@ if (finePointer) {
   });
   photo.addEventListener('pointerleave', () => gsap.to(photo, { rotateY: 0, rotateX: 0, duration: 1, ease: 'elastic.out(1,0.5)' }));
 }
+
+/* ---------- Projetos: scroll horizontal ---------- */
+const mm = gsap.matchMedia();
+mm.add('(min-width: 900px)', () => {
+  const track = document.getElementById('projectsTrack');
+  const dist = () => track.scrollWidth - window.innerWidth + 64;
+  const tween = gsap.to(track, {
+    x: () => -dist(),
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '#projectsPin',
+      start: 'center center',
+      end: () => '+=' + dist(),
+      pin: true,
+      scrub: 1,
+      invalidateOnRefresh: true,
+    },
+  });
+  // carrossel curvo: cada card gira em Y e recua em Z conforme se afasta do centro
+  // só recalcula quando o trilho anda (sem ler layout a cada quadro: usa offsets guardados)
+  const cards = gsap.utils.toArray('.pcard').map((el) => ({ el, set: gsap.quickSetter(el, 'css') }));
+  const measure = () => cards.forEach((c) => (c.center = c.el.offsetLeft + c.el.offsetWidth / 2));
+  let lastX = null;
+  const upd = () => {
+    const x = gsap.getProperty(track, 'x');
+    if (x === lastX) return;
+    lastX = x;
+    const W = window.innerWidth;
+    for (const c of cards) {
+      const off = gsap.utils.clamp(-1.6, 1.6, (c.center + x - W / 2) / W);
+      c.set({ rotationY: off * -28, z: -Math.abs(off) * 260, rotationZ: off * 2 });
+    }
+  };
+  measure();
+  ScrollTrigger.addEventListener('refresh', () => { measure(); lastX = null; upd(); });
+  gsap.ticker.add(upd);
+  // cards entram com rotação conforme ficam visíveis
+  gsap.utils.toArray('.pcard__cover .cv').forEach((cv) =>
+    gsap.fromTo(cv, { scale: 1.25 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: cv, containerAnimation: tween, start: 'left right', end: 'right left', scrub: true } })
+  );
+  return () => gsap.ticker.remove(upd);
+});
+mm.add('(max-width: 899px)', () => {
+  gsap.utils.toArray('.pcard').forEach((c) =>
+    gsap.from(c, { y: 80, opacity: 0, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: c, start: 'top 90%' } })
+  );
+});
 
 /* ---------- Cursor custom + magnetismo ---------- */
 if (finePointer) {
