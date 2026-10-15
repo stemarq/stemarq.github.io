@@ -146,6 +146,18 @@ document.querySelectorAll('[data-count]').forEach((el) => {
   });
 });
 
+// Foto: tilt 3D seguindo o mouse
+const photo = document.querySelector('.about__photo');
+if (finePointer) {
+  photo.addEventListener('pointermove', (e) => {
+    const r = photo.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    gsap.to(photo, { rotateY: x * 14, rotateX: -y * 14, duration: 0.6, ease: 'power3.out' });
+  });
+  photo.addEventListener('pointerleave', () => gsap.to(photo, { rotateY: 0, rotateX: 0, duration: 1, ease: 'elastic.out(1,0.5)' }));
+}
+
 /* ---------- Cursor custom + magnetismo ---------- */
 if (finePointer) {
   document.body.classList.add('has-cursor');
