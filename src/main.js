@@ -208,6 +208,15 @@ mm.add('(max-width: 899px)', () => {
   );
 });
 
+// Spotlight nos cards
+document.querySelectorAll('.pcard').forEach((c) =>
+  c.addEventListener('pointermove', (e) => {
+    const r = c.getBoundingClientRect();
+    c.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    c.style.setProperty('--my', `${e.clientY - r.top}px`);
+  })
+);
+
 /* ---------- Cursor custom + magnetismo ---------- */
 if (finePointer) {
   document.body.classList.add('has-cursor');
