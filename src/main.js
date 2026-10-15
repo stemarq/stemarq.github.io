@@ -2,6 +2,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { initScene } from './scene.js';
+import { initSphere } from './sphere.js';
 import { renderFeatured } from './projects.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -216,6 +217,10 @@ document.querySelectorAll('.pcard').forEach((c) =>
     c.style.setProperty('--my', `${e.clientY - r.top}px`);
   })
 );
+
+/* ---------- Stack ---------- */
+initSphere(document.getElementById('sphere'));
+gsap.from('.stack__groups > div', { y: 30, opacity: 0, stagger: 0.1, duration: 0.9, ease: 'expo.out', scrollTrigger: { trigger: '.stack__groups', start: 'top 88%' } });
 
 /* ---------- Cursor custom + magnetismo ---------- */
 if (finePointer) {
