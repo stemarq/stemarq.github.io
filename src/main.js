@@ -240,6 +240,18 @@ vcards.forEach((card, i) => {
 });
 gsap.from('.vcard h3', { yPercent: 30, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.1, scrollTrigger: { trigger: '.vstack', start: 'top 80%' } });
 
+/* ---------- Copiar e-mail ---------- */
+document.getElementById('copyEmail').addEventListener('click', async () => {
+  const fb = document.getElementById('copyFeedback');
+  try {
+    await navigator.clipboard.writeText('stemarq.contato@gmail.com');
+    fb.textContent = 'copiado ✓';
+  } catch {
+    fb.textContent = 'ops';
+  }
+  setTimeout(() => (fb.textContent = '⧉'), 1800);
+});
+
 /* ---------- Cursor custom + magnetismo ---------- */
 if (finePointer) {
   document.body.classList.add('has-cursor');
