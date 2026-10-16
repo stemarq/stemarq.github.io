@@ -240,6 +240,15 @@ vcards.forEach((card, i) => {
 });
 gsap.from('.vcard h3', { yPercent: 30, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.1, scrollTrigger: { trigger: '.vstack', start: 'top 80%' } });
 
+/* ---------- Footer gigante se levanta em 3D ---------- */
+gsap.from('.footer__name', {
+  rotationX: -80,
+  yPercent: 40,
+  opacity: 0,
+  ease: 'none',
+  scrollTrigger: { trigger: '.footer', start: 'top bottom', end: 'bottom bottom', scrub: true },
+});
+
 /* ---------- Copiar e-mail ---------- */
 document.getElementById('copyEmail').addEventListener('click', async () => {
   const fb = document.getElementById('copyFeedback');

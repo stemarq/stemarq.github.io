@@ -325,3 +325,9 @@ section { position: relative; }
 .social span { transition: transform 0.5s var(--ease); }
 .social:hover span { transform: translateX(8px); color: var(--violet); }
 
+/* ---------- Footer ---------- */
+.footer { overflow: hidden; padding: 0 var(--pad) 24px; }
+.footer__name { font-family: var(--display); font-size: 23.5vw; line-height: 0.8; letter-spacing: -0.02em; text-align: center; background: linear-gradient(180deg, var(--violet), rgba(123,44,191,0.05)); -webkit-background-clip: text; background-clip: text; color: transparent; user-select: none; }
+.footer__bar { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 20px; margin-top: 24px; }
+.footer__bar a:hover { color: var(--acid); }
+
