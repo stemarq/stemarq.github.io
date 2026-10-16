@@ -222,6 +222,24 @@ document.querySelectorAll('.pcard').forEach((c) =>
 initSphere(document.getElementById('sphere'));
 gsap.from('.stack__groups > div', { y: 30, opacity: 0, stagger: 0.1, duration: 0.9, ease: 'expo.out', scrollTrigger: { trigger: '.stack__groups', start: 'top 88%' } });
 
+/* ---------- Valores: pilha de cards ---------- */
+const vcards = gsap.utils.toArray('.vcard');
+vcards.forEach((card, i) => {
+  const next = vcards[i + 1];
+  if (!next) return;
+  // quando o próximo card sobe, este recua em 3D e escurece.
+  // O escurecer é uma película com opacity (só GPU) — `filter` aqui obrigava a redesenhar o card e ele piscava.
+  const shade = document.createElement('i');
+  shade.className = 'vcard__shade';
+  card.appendChild(shade);
+  const tl = gsap.timeline({
+    defaults: { ease: 'none' },
+    scrollTrigger: { trigger: next, start: 'top bottom', end: 'top 20%', scrub: 0.4 },
+  });
+  tl.to(card, { scale: 0.9, rotationX: 10, transformPerspective: 1200, force3D: true }, 0).to(shade, { opacity: 0.5 }, 0);
+});
+gsap.from('.vcard h3', { yPercent: 30, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.1, scrollTrigger: { trigger: '.vstack', start: 'top 80%' } });
+
 /* ---------- Cursor custom + magnetismo ---------- */
 if (finePointer) {
   document.body.classList.add('has-cursor');
