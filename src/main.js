@@ -4,6 +4,7 @@ import Lenis from 'lenis';
 import { initScene } from './scene.js';
 import { initSphere } from './sphere.js';
 import { renderFeatured } from './projects.js';
+import { initActivity, getContributions, GH_USER } from './activity.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -71,6 +72,7 @@ const route = [
   ['hero'],
   ['sobre', '#sobre', 'top 75%', 'top 25%'],
   ['projetos', '#projectsPin', 'top 90%', 'top 30%'],
+  ['atividade', '#atividade', 'top 80%', 'top 40%'],
   ['stack', '#stack', 'top 60%', 'top 10%'],
   ['valores', '#valores', 'top 80%', 'top 40%'],
   ['contato', '#contato', 'top 80%', 'top 40%'],
@@ -236,6 +238,9 @@ document.querySelectorAll('.pcard').forEach((c) =>
     c.style.setProperty('--my', `${e.clientY - r.top}px`);
   })
 );
+
+/* ---------- Atividade ---------- */
+initActivity(document.getElementById('atividade'), { finePointer, reduced });
 
 /* ---------- Stack ---------- */
 initSphere(document.getElementById('sphere'));
