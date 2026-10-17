@@ -331,3 +331,12 @@ section { position: relative; }
 .footer__bar { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 20px; margin-top: 24px; }
 .footer__bar a:hover { color: var(--acid); }
 
+/* ---------- 3D ---------- */
+.projects__pin { perspective: 1400px; perspective-origin: 50% 50%; }
+.projects__track { transform-style: preserve-3d; }
+.pcard { will-change: transform; }
+
+
+.footer { perspective: 700px; }
+.footer__name { transform-origin: 50% 100%; }
+
