@@ -340,3 +340,54 @@ section { position: relative; }
 .footer { perspective: 700px; }
 .footer__name { transform-origin: 50% 100%; }
 
+/* ---------- Responsivo ---------- */
+@media (max-width: 1100px) {
+  .activity__body { grid-template-columns: 1fr; }
+  .activity__stats { grid-template-columns: repeat(4, 1fr); }
+  .activity__range, .activity__legend { grid-column: span 2; }
+  .nav__status { display: none; }
+  .pcard { grid-template-columns: 1fr; grid-template-rows: 45% 1fr; }
+  .pcard__name { margin-top: 0; }
+  .pcard__body { padding: 28px; }
+  .pcard__hl { display: none; }
+}
+@media (max-width: 899px) {
+  .city { height: 380px; margin: 0 calc(var(--pad) * -1); }
+  .activity__stats { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .nav__links { display: none; }
+  .nav__menu { display: block; }
+  .hero__meta span:nth-child(2) { display: none; }
+  .hero__scroll { display: none; }
+  .about { padding: 100px var(--pad); }
+  .about__grid { grid-template-columns: 1fr; }
+  .about__photo { position: relative; top: 0; max-width: 420px; }
+  .about__cols { grid-template-columns: 1fr; gap: 16px; margin-top: 32px; }
+  .stats { grid-template-columns: repeat(2, 1fr); margin-top: 48px; }
+  .stat { padding-bottom: 16px; }
+  .projects__hint { display: none; }
+  .projects__pin { padding: 40px 0 0; }
+  .projects__track { flex-direction: column; width: auto; gap: 20px; }
+  .pcard, .pcard--end { width: 100%; height: auto; min-height: 0; grid-template-rows: 300px auto; }
+  .pcard--end { padding: 40px 28px; }
+  .pcard__hl { display: grid; }
+  .activity { padding: 80px var(--pad); }
+  .values { padding: 80px var(--pad) 20px; }
+  .vcard { height: auto; min-height: 72vh; top: calc(80px + var(--i, 0) * 14px); margin-bottom: 6vh; }
+  .vcard__main { grid-template-columns: 1fr; gap: 20px; }
+  .contact { padding: 100px var(--pad) 80px; }
+  .socials { grid-template-columns: 1fr; margin-top: 64px; }
+  .social, .social + .social { padding: 22px 0; border-left: 0; }
+  .contact__cta { padding: 22px 32px; }
+}
+@media (max-width: 520px) {
+  .stack__groups { grid-template-columns: 1fr; }
+  .cv-phone { transform: rotate(-8deg) scale(.75); }
+  .cv-pun { grid-template-columns: repeat(3, 56px); grid-template-rows: repeat(3, 56px); }
+  .cv--term pre { font-size: 11px; }
+  .outline { -webkit-text-stroke-width: 1.2px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+}
+
