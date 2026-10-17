@@ -65,7 +65,26 @@ window.addEventListener('pointerdown', (e) => {
   if (e.target.closest('.hero')) scene3d.kick = 0.45;
 });
 
-/* ---------- Cena 3D: progresso da página ---------- */
+/* ---------- Blob viaja entre as seções ---------- */
+// [chave do keyframe, elemento que dispara, início, fim]
+const route = [
+  ['hero'],
+  ['sobre', '#sobre', 'top 75%', 'top 25%'],
+  ['projetos', '#projectsPin', 'top 90%', 'top 30%'],
+  ['stack', '#stack', 'top 60%', 'top 10%'],
+  ['valores', '#valores', 'top 80%', 'top 40%'],
+  ['contato', '#contato', 'top 80%', 'top 40%'],
+  ['rodape', '.footer', 'top 90%', 'bottom bottom'],
+];
+for (let i = 1; i < route.length; i++) {
+  const [key, trigger, start, end] = route[i];
+  gsap.fromTo(scene3d.target, { ...scene3d.frames[route[i - 1][0]] }, {
+    ...scene3d.frames[key],
+    ease: 'none',
+    immediateRender: false,
+    scrollTrigger: { trigger, start, end, scrub: true },
+  });
+}
 ScrollTrigger.create({
   start: 0,
   end: 'max',
