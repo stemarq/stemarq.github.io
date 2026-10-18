@@ -159,17 +159,53 @@ gsap.fromTo('.about__photo-inner', { clipPath: 'inset(100% 0 0 0)' }, { clipPath
 gsap.fromTo('.about__photo-inner img', { scale: 1.35 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '.about__photo', start: 'top bottom', end: 'bottom top', scrub: true } });
 gsap.from('.about__cols p, .stat', { y: 40, opacity: 0, stagger: 0.1, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: '.about__cols', start: 'top 85%' } });
 
-// Contadores
-document.querySelectorAll('[data-count]').forEach((el) => {
+// Contadores — os marcados com data-gh são atualizados ao vivo pela API do GitHub
+const counters = [...document.querySelectorAll('[data-count]')];
+const renderCount = (el, v) => (el.textContent = Math.round(v) + (el.dataset.suffix || ''));
+counters.forEach((el) => {
   const o = { v: 0 };
-  gsap.to(o, {
-    v: +el.dataset.count,
-    duration: 2,
-    ease: 'expo.out',
-    scrollTrigger: { trigger: el, start: 'top 90%' },
-    onUpdate: () => (el.textContent = Math.round(o.v) + (el.dataset.suffix || '')),
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 90%',
+    once: true,
+    onEnter: () => {
+      el.dataset.played = '1';
+      gsap.to(o, { v: +el.dataset.count, duration: 2, ease: 'expo.out', onUpdate: () => renderCount(el, o.v) });
+    },
   });
 });
+
+const GH_CACHE = 'gh-stats-v2';
+async function loadGithubStats() {
+  try {
+    const c = JSON.parse(localStorage.getItem(GH_CACHE) || 'null');
+    if (c && Date.now() - c.t < 3600e3) return { ...c.d, contribs: (await getContributions().catch(() => ({}))).total };
+  } catch {}
+  const get = (url) => fetch(url, { signal: AbortSignal.timeout(6000) }).then((r) => (r.ok ? r.json() : Promise.reject(r.status)));
+  const [user, commits, contribs] = await Promise.allSettled([
+    get(`https://api.github.com/users/${GH_USER}`),
+    get(`https://api.github.com/search/commits?q=author:${GH_USER}&per_page=1`),
+    getContributions(),
+  ]);
+  const d = { repos: user.value?.public_repos, commits: commits.value?.total_count };
+  // cache de 1h p/ não estourar o limite da API do GitHub
+  if (d.repos && d.commits) try { localStorage.setItem(GH_CACHE, JSON.stringify({ t: Date.now(), d })); } catch {}
+  return { ...d, contribs: contribs.value?.total };
+}
+loadGithubStats()
+  .then((d) => {
+    counters.forEach((el) => {
+      const v = d[el.dataset.gh];
+      if (!Number.isFinite(v) || v <= 0) return; // falhou → mantém o valor do HTML
+      el.dataset.count = v;
+      el.dataset.suffix = '';
+      if (el.dataset.played) {
+        const o = { v: parseInt(el.textContent) || 0 };
+        gsap.to(o, { v, duration: 1.2, ease: 'expo.out', onUpdate: () => renderCount(el, o.v) });
+      }
+    });
+  })
+  .catch(() => {});
 
 // Foto: tilt 3D seguindo o mouse
 const photo = document.querySelector('.about__photo');
