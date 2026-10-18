@@ -220,6 +220,8 @@ if (finePointer) {
 }
 
 /* ---------- Projetos: scroll horizontal ---------- */
+const projSection = document.getElementById('projectsPin');
+new IntersectionObserver(([e]) => projSection.classList.toggle('is-offscreen', !e.isIntersecting)).observe(projSection);
 const mm = gsap.matchMedia();
 mm.add('(min-width: 900px)', () => {
   const track = document.getElementById('projectsTrack');
