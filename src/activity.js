@@ -171,10 +171,16 @@ export function initActivity(root, { finePointer, reduced }) {
 
   new ResizeObserver(() => resize()).observe(city);
 
-  city.addEventListener('pointermove', (e) => {
+  // mouse: pointermove; toque: pointerdown (no celular não existe "passar por cima")
+  const onPoint = (e) => {
     const r = city.getBoundingClientRect();
     const px = e.clientX - r.left, py = e.clientY - r.top;
-    tip.style.transform = `translate(${px + 16}px, ${py + 16}px)`;
+    // a dica fica sempre dentro da cidade (no celular ela escapava pela borda direita)
+    const tx = Math.min(px + 16, r.width - tip.offsetWidth - 8);
+    // no toque a dica vai acima do dedo, senão o próprio dedo cobre
+    const above = e.pointerType !== 'mouse' || py + 16 + tip.offsetHeight > r.height;
+    const ty = above ? Math.max(8, py - tip.offsetHeight - 24) : py + 16;
+    tip.style.transform = `translate(${Math.max(8, tx)}px, ${ty}px)`;
     // hit test do mais da frente para o de trás
     let hit = -1;
     for (let k = boxes.length - 1; k >= 0 && hit < 0; k--) {
@@ -192,6 +198,13 @@ export function initActivity(root, { finePointer, reduced }) {
       view.trx = 60 - (py / r.height - 0.5) * 12;
       wake();
     }
+  };
+  city.addEventListener('pointermove', onPoint);
+  city.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'mouse') return;
+    onPoint(e);
+    // repete depois do conteúdo da dica mudar, p/ posicionar com o tamanho certo
+    requestAnimationFrame(() => onPoint(e));
   });
   // rolar a página com o mouse parado não dispara pointerleave: some com a dica ao rolar
   window.addEventListener('scroll', () => {
@@ -200,7 +213,8 @@ export function initActivity(root, { finePointer, reduced }) {
     tip.classList.remove('on');
     if (!running) draw();
   }, { passive: true });
-  city.addEventListener('pointerleave', () => {
+  city.addEventListener('pointerleave', (e) => {
+    if (e.pointerType !== 'mouse') return; // no toque, a dica fica até o próximo toque ou rolagem
     hover = -1;
     tip.classList.remove('on');
     view.trz = -26; view.trx = 60;
