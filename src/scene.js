@@ -81,14 +81,14 @@ export const KEYFRAMES = {
     rodape:   { x: 0,    y: -0.45, s: 0.6,  amp: 0.35, spread: 1.6, vis: 1 },
   },
   mobile: {
-    hero:     { x: 0,    y: 0.6,  s: 0.48, amp: 0.3,  spread: 0.7, vis: 1 },
+    hero:     { x: 0,    y: 0.32, s: 0.44, amp: 0.3,  spread: 0.6, vis: 1 },
     sobre:    { x: 0,    y: 1.8,  s: 0.3,  amp: 0.4,  spread: 0.5, vis: 0 },
-    projetos: { x: 0,    y: 0,    s: 1.1,  amp: 0.55, spread: 1.3, vis: 1 },
+    projetos: { x: 0,    y: 0,    s: 0.6,  amp: 0.55, spread: 1,   vis: 0 }, // cards empilhados: sem espaço livre no celular
     atividade:{ x: 0,    y: -2.6, s: 0.4,  amp: 0.4,  spread: 0.8, vis: 0 },
     stack:    { x: 0,    y: -2.6, s: 0.3,  amp: 0.35, spread: 0.5, vis: 0 },
     valores:  { x: 0,    y: -2.6, s: 0.3,  amp: 0.4,  spread: 0.6, vis: 0 },
     contato:  { x: 0,    y: -2.6, s: 0.4,  amp: 0.3,  spread: 0.7, vis: 0 },
-    rodape:   { x: 0,    y: -1.4, s: 0.45, amp: 0.35, spread: 0.9, vis: 1 },
+    rodape:   { x: 0,    y: -0.62, s: 0.36, amp: 0.35, spread: 0.55, vis: 0 }, // tela estreita: atravessaria as letras do STEPHANY
   },
 };
 

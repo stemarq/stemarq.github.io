@@ -70,7 +70,8 @@ window.addEventListener('pointerdown', (e) => {
 // [chave do keyframe, elemento que dispara, início, fim]
 const route = [
   ['hero'],
-  ['sobre', '#sobre', 'top 75%', 'top 25%'],
+  // no celular o blob precisa sumir antes do título do Sobre chegar no meio da tela
+  ['sobre', '#sobre', isMobile ? 'top bottom' : 'top 75%', isMobile ? 'top 60%' : 'top 25%'],
   ['projetos', '#projectsPin', 'top 90%', 'top 30%'],
   ['atividade', '#atividade', 'top 80%', 'top 40%'],
   ['stack', '#stack', 'top 60%', 'top 10%'],
