@@ -380,6 +380,8 @@ section { position: relative; }
   .pcard__hl { display: none; }
 }
 @media (max-width: 899px) {
+  .stack { grid-template-columns: 1fr; min-height: 0; padding: 80px var(--pad); gap: 8px; }
+  .stack__sphere { height: min(92vw, 420px); touch-action: pan-y; } /* arrastar de lado gira; deslizar pra cima/baixo rola a página */
   .city { height: 380px; margin: 0 calc(var(--pad) * -1); }
   .activity__stats { grid-template-columns: repeat(2, 1fr); gap: 18px; }
   .nav__links { display: none; }
