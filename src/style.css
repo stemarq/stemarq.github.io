@@ -34,6 +34,9 @@ img { display: block; max-width: 100%; }
 ::selection { background: var(--acid); color: var(--bg); }
 .mono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
 .accent { color: var(--acid); }
+/* textos de instrução: mouse no desktop, toque no celular */
+.on-touch { display: none; }
+@media (hover: none) { .on-mouse { display: none; } .on-touch { display: inline; } }
 .line { display: block; overflow: hidden; padding: 0.14em 0 0.04em; margin-top: -0.14em; } /* folga em cima p/ acentos (Ó, Í) não serem cortados */
 .ch { display: inline-block; will-change: transform; }
 .wd { display: inline-block; white-space: nowrap; }
