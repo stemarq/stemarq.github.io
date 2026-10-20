@@ -5,6 +5,7 @@ import { initScene } from './scene.js';
 import { initSphere } from './sphere.js';
 import { renderFeatured } from './projects.js';
 import { initActivity, getContributions, GH_USER } from './activity.js';
+import { initRepoCounter, getRepoCount } from './repos.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -176,22 +177,25 @@ counters.forEach((el) => {
   });
 });
 
-const GH_CACHE = 'gh-stats-v2';
+const GH_CACHE = 'gh-stats-v3';
 async function loadGithubStats() {
+  // repositórios sempre ao vivo (mesma requisição do rodapé); só os commits ficam em cache
+  const live = Promise.allSettled([getRepoCount(), getContributions()]);
+  let commits;
   try {
     const c = JSON.parse(localStorage.getItem(GH_CACHE) || 'null');
-    if (c && Date.now() - c.t < 3600e3) return { ...c.d, contribs: (await getContributions().catch(() => ({}))).total };
+    if (c && Date.now() - c.t < 3600e3) commits = c.commits;
   } catch {}
-  const get = (url) => fetch(url, { signal: AbortSignal.timeout(6000) }).then((r) => (r.ok ? r.json() : Promise.reject(r.status)));
-  const [user, commits, contribs] = await Promise.allSettled([
-    get(`https://api.github.com/users/${GH_USER}`),
-    get(`https://api.github.com/search/commits?q=author:${GH_USER}&per_page=1`),
-    getContributions(),
-  ]);
-  const d = { repos: user.value?.public_repos, commits: commits.value?.total_count };
-  // cache de 1h p/ não estourar o limite da API do GitHub
-  if (d.repos && d.commits) try { localStorage.setItem(GH_CACHE, JSON.stringify({ t: Date.now(), d })); } catch {}
-  return { ...d, contribs: contribs.value?.total };
+  if (commits === undefined) {
+    const r = await fetch(`https://api.github.com/search/commits?q=author:${GH_USER}&per_page=1`, { signal: AbortSignal.timeout(6000) })
+      .then((r) => (r.ok ? r.json() : null))
+      .catch(() => null);
+    commits = r?.total_count;
+    // cache de 1h p/ não estourar o limite da busca do GitHub
+    if (commits) try { localStorage.setItem(GH_CACHE, JSON.stringify({ t: Date.now(), commits })); } catch {}
+  }
+  const [repos, contribs] = await live;
+  return { repos: repos.value, commits, contribs: contribs.value?.total };
 }
 loadGithubStats()
   .then((d) => {
@@ -311,6 +315,9 @@ gsap.from('.footer__name', {
   ease: 'none',
   scrollTrigger: { trigger: '.footer', start: 'top bottom', end: 'bottom bottom', scrub: true },
 });
+
+/* ---------- Contador de repositórios no rodapé ---------- */
+initRepoCounter(document.getElementById('repoCounter'), { reduced });
 
 /* ---------- Copiar e-mail ---------- */
 document.getElementById('copyEmail').addEventListener('click', async () => {
