@@ -5,7 +5,7 @@ import { initScene } from './scene.js';
 import { initSphere } from './sphere.js';
 import { renderFeatured } from './projects.js';
 import { initActivity, getContributions, GH_USER } from './activity.js';
-import { initRepoCounter, getRepoCount } from './repos.js';
+import { initRepoCounter, onRepoCount } from './repos.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -172,15 +172,40 @@ counters.forEach((el) => {
     once: true,
     onEnter: () => {
       el.dataset.played = '1';
+      if (el.dataset.failed) return void (el.textContent = '—');
       gsap.to(o, { v: +el.dataset.count, duration: 2, ease: 'expo.out', onUpdate: () => renderCount(el, o.v) });
     },
   });
 });
 
+// Troca o valor do HTML pelo número ao vivo (anima se o contador já apareceu na tela)
+function setStat(el, v) {
+  el.dataset.count = v;
+  el.dataset.suffix = '';
+  delete el.dataset.failed;
+  el.removeAttribute('title');
+  if (el.dataset.played) {
+    const o = { v: parseInt(el.textContent) || 0 };
+    gsap.to(o, { v, duration: 1.2, ease: 'expo.out', onUpdate: () => renderCount(el, o.v) });
+  }
+}
+
+// Repositórios: seguem o rodapé (mesma consulta, inclusive a nova ao voltar para a aba).
+// Se a API falha, mostra "—" em vez do número fixo do HTML, que poderia estar desatualizado.
+const reposStat = document.querySelector('[data-gh="repos"]');
+onRepoCount(
+  (v) => setStat(reposStat, v),
+  () => {
+    reposStat.dataset.failed = '1';
+    reposStat.title = 'API do GitHub indisponível';
+    if (reposStat.dataset.played) reposStat.textContent = '—';
+  }
+);
+
+// Commits e contribuições: cache de 1h; se falharem, fica o valor do HTML
 const GH_CACHE = 'gh-stats-v3';
 async function loadGithubStats() {
-  // repositórios sempre ao vivo (mesma requisição do rodapé); só os commits ficam em cache
-  const live = Promise.allSettled([getRepoCount(), getContributions()]);
+  const contribs = getContributions().catch(() => null);
   let commits;
   try {
     const c = JSON.parse(localStorage.getItem(GH_CACHE) || 'null');
@@ -194,20 +219,13 @@ async function loadGithubStats() {
     // cache de 1h p/ não estourar o limite da busca do GitHub
     if (commits) try { localStorage.setItem(GH_CACHE, JSON.stringify({ t: Date.now(), commits })); } catch {}
   }
-  const [repos, contribs] = await live;
-  return { repos: repos.value, commits, contribs: contribs.value?.total };
+  return { commits, contribs: (await contribs)?.total };
 }
 loadGithubStats()
   .then((d) => {
     counters.forEach((el) => {
       const v = d[el.dataset.gh];
-      if (!Number.isFinite(v) || v <= 0) return; // falhou → mantém o valor do HTML
-      el.dataset.count = v;
-      el.dataset.suffix = '';
-      if (el.dataset.played) {
-        const o = { v: parseInt(el.textContent) || 0 };
-        gsap.to(o, { v, duration: 1.2, ease: 'expo.out', onUpdate: () => renderCount(el, o.v) });
-      }
+      if (Number.isFinite(v) && v > 0) setStat(el, v); // falhou → mantém o valor do HTML
     });
   })
   .catch(() => {});

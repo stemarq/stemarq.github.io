@@ -7,7 +7,11 @@ const LABEL = 'repositórios públicos no GitHub';
 const REFRESH_MS = 60e3; // ao voltar para a aba, consulta de novo se já passou 1 min
 
 let pending;
-// Uma requisição por vez, compartilhada com o contador do "Sobre".
+const listeners = [];
+// O "Sobre" se inscreve aqui para mostrar sempre o mesmo número (ou a mesma falha) do rodapé.
+export const onRepoCount = (ok, fail) => listeners.push({ ok, fail });
+
+// Uma requisição por vez.
 export function getRepoCount() {
   if (pending) return pending;
   // no-store: a API manda max-age=60 e o navegador serviria o número antigo
@@ -42,6 +46,7 @@ export function initRepoCounter(el, { reduced }) {
         el.dataset.state = 'ok';
         label.textContent = LABEL;
         show();
+        listeners.forEach((l) => l.ok(v));
       })
       .catch((e) => {
         value = null;
@@ -49,6 +54,7 @@ export function initRepoCounter(el, { reduced }) {
         el.dataset.state = 'error';
         num.textContent = '!';
         label.textContent = errorText(e);
+        listeners.forEach((l) => l.fail(e));
       });
   };
 
