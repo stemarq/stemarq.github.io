@@ -1,76 +1,103 @@
 // Dados dos projetos — extraídos dos READMEs em github.com/stemarq
+// Cada projeto pode ter até quatro ações, mostradas como botões no card (só aparecem as preenchidas):
+//   video → vídeo de apresentação com o app rodando, em public/videos/ (a capa é o .jpg de mesmo nome); abre num player
+//   live  → versão no ar para testar (liveLabel muda o texto do botão)
+//   repo  → código no GitHub
+//   docs  → documentação (docsLabel diz o que é: requisitos, GDD, artigo...)
 export const featured = [
   {
     id: 'xepa',
+    video: './videos/xepa.mp4',
     name: 'Xepa',
     year: '2026',
     kind: 'App mobile + API',
     desc: 'Hub de vida universitária para quem mora sozinho pela primeira vez: despensa, finanças, estudos e lavanderia num só app.',
     highlights: ['5 módulos de API prontos', '210 testes automatizados', '18 entidades no PostgreSQL'],
     tags: ['React Native', 'Expo', 'Node', 'TypeScript', 'PostgreSQL'],
-    url: 'https://github.com/stemarq/Xepa',
+    repo: 'https://github.com/stemarq/Xepa',
+    docs: 'https://github.com/stemarq/Xepa/tree/main/docs',
+    docsLabel: 'Documentação (requisitos, ER, API)',
     colors: ['#d6ff3d', '#2a1a4a'],
     cover: 'phone',
   },
   {
     id: 'dashgit',
+    video: './videos/dashgit.mp4',
     name: 'dashGit',
     year: '2026',
     kind: 'Dashboard de dados',
     desc: 'API + dashboard que mede o fluxo de um time a partir dos boards do GitLab: tempo por coluna, gargalos, revisão e sprints.',
     highlights: ['Eventos de label viram intervalos', 'Cache em SQLite, sem estourar rate limit', 'Swagger interativo'],
     tags: ['Python', 'FastAPI', 'SQLite', 'GitLab API'],
-    url: 'https://github.com/stemarq/dashGit',
+    repo: 'https://github.com/stemarq/dashGit',
+    docs: 'https://github.com/stemarq/dashGit#readme',
+    docsLabel: 'README detalhado',
     colors: ['#c77dff', '#120a24'],
     cover: 'chart',
   },
   {
     id: 'cielo',
+    video: './videos/cielo.mp4',
     name: 'Conexão Cielo',
     year: '2026',
     kind: 'Jogo educativo · Inteli × Cielo',
     desc: 'Visual novel que treina Gerentes de Negócios da Cielo em negociações simuladas — com barra de satisfação, reputação e fases desbloqueáveis.',
     highlights: ['Parceria real com a Cielo', 'Roda direto no navegador', 'Time Blue Codes, 8 pessoas'],
     tags: ['Phaser', 'JavaScript', 'GitLab CI'],
-    url: 'https://maaybee.github.io/jogo_cielo/',
-    urlLabel: 'Jogar agora',
+    live: 'https://stemarq.github.io/jogo_cielo/',
+    liveLabel: 'Jogar agora',
     repo: 'https://github.com/stemarq/jogo_cielo',
+    docs: 'https://github.com/stemarq/jogo_cielo/blob/main/documents/gdd.md',
+    docsLabel: 'Documento de design (GDD)',
     colors: ['#3dc3ff', '#06152e'],
     cover: 'game',
   },
   {
     id: 'gitia',
+    video: './videos/gitia.mp4',
     name: 'GItIA',
     year: '2026',
     kind: 'Automação com IA',
     desc: 'Cole uma anotação solta, o Gemini estrutura e o app publica como issue no GitLab. Do “anotei numa linha” à tarefa bem escrita.',
     highlights: ['Integração Gemini + GitLab', 'Endpoint de status das credenciais', 'Zero build no front'],
     tags: ['Node.js', 'Express', 'Gemini', 'GitLab API'],
-    url: 'https://github.com/stemarq/GItIA',
+    repo: 'https://github.com/stemarq/GItIA',
+    docs: 'https://github.com/stemarq/GItIA#readme',
+    docsLabel: 'README',
     colors: ['#ff7ad9', '#1f0820'],
     cover: 'terminal',
   },
   {
     id: 'dudy',
+    video: './videos/dudy.mp4',
     name: 'DudyApp',
     year: '2025',
     kind: 'App de inglês para crianças',
     desc: 'Mapa de lições, quizzes, centro de histórias e minijogos com o urso Dudy como mascote — com login separado para responsável e criança.',
     highlights: ['Minijogos de memória e palavras', 'Auth com Supabase', 'Empacotado com Capacitor'],
     tags: ['JavaScript', 'Supabase', 'Capacitor'],
-    url: 'https://github.com/stemarq/DudyApp',
+    live: 'https://stemarq.github.io/DudyApp/',
+    liveLabel: 'Abrir o app',
+    repo: 'https://github.com/stemarq/DudyApp',
+    docs: 'https://github.com/stemarq/DudyApp#readme',
+    docsLabel: 'README',
     colors: ['#ffb23d', '#2a1406'],
     cover: 'bear',
   },
   {
     id: 'genetools',
+    video: './videos/genetools.mp4',
     name: 'GeneTools',
     year: '2025',
     kind: 'Simulador educacional · Pesquisa científica',
     desc: 'Simulador de cruzamentos genéticos para o ensino médio: o aluno monta os genótipos e vê o quadro de Punnett acontecer passo a passo.',
     highlights: ['Explicação guiada', 'Exercícios práticos', 'Parte de uma pesquisa científica publicada'],
     tags: ['HTML', 'CSS', 'JavaScript'],
-    url: 'https://github.com/stemarq/GeneTools',
+    live: 'https://stemarq.github.io/GeneTools/',
+    liveLabel: 'Usar o simulador',
+    repo: 'https://github.com/stemarq/GeneTools',
+    docs: 'https://github.com/stemarq/GeneTools/blob/main/Genetools_%20Facilitando%20o%20aprendizado%20na%20gen%C3%A9tica%20atr%C3%A1ves%20de%20simuladores%20de%20cruzamentos%20no%20ensino%20m%C3%A9dio.pdf',
+    docsLabel: 'Artigo científico (PDF)',
     colors: ['#5dffb0', '#06231a'],
     cover: 'punnett',
   },
@@ -140,12 +167,22 @@ arrumar login quebrando no safari
     </div>`,
 };
 
+const ext = (href, cls, label) => `<a class="pbtn ${cls}" href="${href}" target="_blank" rel="noopener">${label} <i aria-hidden="true">↗</i></a>`;
+
+function actions(p) {
+  return [
+    p.video ? `<button type="button" class="pbtn pbtn--main" data-video="${p.video}" data-poster="${p.video.replace(/\.mp4$/, '.jpg')}" data-title="${p.name}">▶ Ver rodando</button>` : '',
+    p.live ? ext(p.live, p.video ? '' : 'pbtn--main', p.liveLabel || 'Ver no ar') : '',
+    p.repo ? ext(p.repo, '', 'Código') : '',
+    p.docs ? ext(p.docs, '', p.docsLabel || 'Documentação') : '',
+  ].join('');
+}
+
 export function renderFeatured(track) {
   track.innerHTML = featured
     .map(
       (p, i) => `
-    <article class="pcard" style="--c1:${p.colors[0]};--c2:${p.colors[1]}" data-cursor="${p.urlLabel || 'Ver projeto'}">
-      <a href="${p.url}" target="_blank" rel="noopener" class="pcard__link" aria-label="${p.name}"></a>
+    <article class="pcard" style="--c1:${p.colors[0]};--c2:${p.colors[1]}">
       <div class="pcard__cover">${covers[p.cover]()}</div>
       <div class="pcard__body">
         <div class="pcard__top mono"><span>${String(i + 1).padStart(2, '0')} / ${String(featured.length).padStart(2, '0')}</span><span>${p.year}</span></div>
@@ -154,14 +191,33 @@ export function renderFeatured(track) {
         <p class="pcard__desc">${p.desc}</p>
         <ul class="pcard__hl">${p.highlights.map((h) => `<li>${h}</li>`).join('')}</ul>
         <div class="pcard__tags">${p.tags.map((t) => `<span>${t}</span>`).join('')}</div>
-        ${p.repo ? `<a class="pcard__repo mono" href="${p.repo}" target="_blank" rel="noopener">Código no GitHub ↗</a>` : ''}
+        <div class="pcard__actions mono">${actions(p)}</div>
       </div>
     </article>`
     )
     .join('') +
-    `<article class="pcard pcard--end" data-cursor="GitHub">
-      <a href="https://github.com/stemarq" target="_blank" rel="noopener" class="pcard__link" aria-label="GitHub"></a>
+    `<article class="pcard pcard--end">
+      <a href="https://github.com/stemarq" target="_blank" rel="noopener" class="pcard__link" aria-label="Ver todos os projetos no GitHub"></a>
       <span class="mono">E tem mais</span>
       <h3>Ver tudo no<br/><em>GitHub ↗</em></h3>
     </article>`;
+}
+
+// Player do "Ver rodando": um só <dialog> para todos os cards
+export function initVideoModal(root, dialog, { onOpen, onClose } = {}) {
+  const video = dialog.querySelector('video');
+  const title = dialog.querySelector('[data-video-title]');
+  root.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-video]');
+    if (!btn) return;
+    title.textContent = btn.dataset.title;
+    video.poster = btn.dataset.poster || '';
+    video.src = btn.dataset.video;
+    dialog.showModal();
+    onOpen?.();
+    video.play().catch(() => {}); // sem autoplay permitido: fica nos controles
+  });
+  dialog.querySelector('[data-video-close]').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('click', (e) => e.target === dialog && dialog.close()); // clique fora fecha
+  dialog.addEventListener('close', () => { video.pause(); video.removeAttribute('src'); video.removeAttribute('poster'); video.load(); onClose?.(); });
 }

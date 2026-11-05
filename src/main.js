@@ -3,7 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { initScene } from './scene.js';
 import { initSphere } from './sphere.js';
-import { renderFeatured } from './projects.js';
+import { renderFeatured, initVideoModal } from './projects.js';
 import { initActivity, getContributions, GH_USER } from './activity.js';
 import { initRepoCounter, onRepoCount } from './repos.js';
 
@@ -300,6 +300,12 @@ document.querySelectorAll('.pcard').forEach((c) =>
   })
 );
 
+// "Ver rodando": vídeo do projeto num player; a página para de rolar enquanto ele está aberto
+initVideoModal(document.getElementById('projectsTrack'), document.getElementById('videoModal'), {
+  onOpen: () => lenis.stop(),
+  onClose: () => lenis.start(),
+});
+
 /* ---------- Atividade ---------- */
 initActivity(document.getElementById('atividade'), { finePointer, reduced });
 
@@ -348,45 +354,6 @@ document.getElementById('copyEmail').addEventListener('click', async () => {
   }
   setTimeout(() => (fb.textContent = '⧉'), 1800);
 });
-
-/* ---------- Cursor custom + magnetismo ---------- */
-if (finePointer) {
-  document.body.classList.add('has-cursor');
-  const cursor = document.getElementById('cursor');
-  const dot = document.getElementById('cursorDot');
-  const label = document.getElementById('cursorLabel');
-  const cx = gsap.quickTo(cursor, 'x', { duration: 0.45, ease: 'power3' });
-  const cy = gsap.quickTo(cursor, 'y', { duration: 0.45, ease: 'power3' });
-  const dx = gsap.quickTo(dot, 'x', { duration: 0.08 });
-  const dy = gsap.quickTo(dot, 'y', { duration: 0.08 });
-  window.addEventListener('pointermove', (e) => {
-    cx(e.clientX); cy(e.clientY); dx(e.clientX); dy(e.clientY);
-  });
-
-  document.addEventListener('pointerover', (e) => {
-    const withLabel = e.target.closest('[data-cursor]');
-    const link = e.target.closest('a, button');
-    if (withLabel) {
-      label.textContent = withLabel.dataset.cursor;
-      cursor.className = 'cursor is-label';
-    } else if (link) {
-      cursor.className = 'cursor is-link';
-    } else {
-      cursor.className = 'cursor';
-    }
-  });
-
-  document.querySelectorAll('[data-magnetic]').forEach((el) => {
-    const xTo = gsap.quickTo(el, 'x', { duration: 0.6, ease: 'elastic.out(1,0.4)' });
-    const yTo = gsap.quickTo(el, 'y', { duration: 0.6, ease: 'elastic.out(1,0.4)' });
-    el.addEventListener('pointermove', (e) => {
-      const r = el.getBoundingClientRect();
-      xTo((e.clientX - r.left - r.width / 2) * 0.35);
-      yTo((e.clientY - r.top - r.height / 2) * 0.35);
-    });
-    el.addEventListener('pointerleave', () => { xTo(0); yTo(0); });
-  });
-}
 
 // os gatilhos do blob são criados antes do pin dos projetos: reordenar para os cálculos considerarem o pin
 ScrollTrigger.sort();

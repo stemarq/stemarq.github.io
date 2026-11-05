@@ -1,0 +1,73 @@
+// Checks dos cards de projeto: cursor do sistema, botões de ação e o player do "Ver rodando".
+import { test, expect } from '@playwright/test';
+
+test.beforeEach(async ({ page }) => {
+  // nada de rede real: GitHub e contribuições simulados
+  await page.route('https://api.github.com/**', (r) => r.fulfill({ json: { public_repos: 17, total_count: 900 } }));
+  await page.route('https://github-contributions-api.jogruber.de/**', (r) => r.fulfill({ json: { total: { lastYear: 1 }, contributions: [] } }));
+});
+
+test('o cursor do sistema fica visível (sem cursor customizado)', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#cursor, .cursor-dot')).toHaveCount(0);
+  await expect(page.locator('body')).not.toHaveClass(/has-cursor/);
+  await expect(page.locator('.contact__cta')).toHaveCSS('cursor', 'pointer');
+});
+
+test('cada projeto tem código e documentação, e os que estão no ar têm o botão para testar', async ({ page }) => {
+  await page.goto('/');
+  const cards = page.locator('.pcard:not(.pcard--end)');
+  await expect(cards).toHaveCount(6);
+  for (let i = 0; i < 6; i++) {
+    const a = cards.nth(i).locator('.pcard__actions a');
+    await expect(a.filter({ hasText: 'Código' })).toHaveAttribute('href', /^https:\/\/github\.com\/stemarq\//);
+    expect(await a.count()).toBeGreaterThanOrEqual(2);
+    for (const el of await a.all()) await expect(el).toHaveAttribute('target', '_blank');
+  }
+  // o card inteiro não é mais um link escondido por cima dos botões
+  await expect(page.locator('.pcard:not(.pcard--end) .pcard__link')).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /Jogar agora/ })).toHaveAttribute('href', 'https://stemarq.github.io/jogo_cielo/');
+});
+
+test('"Ver rodando" abre o vídeo num player, trava a rolagem e para o vídeo ao fechar', async ({ page }) => {
+  await page.goto('/');
+  // injeta um projeto com vídeo para testar o player sem depender de um arquivo real
+  await page.evaluate(() => {
+    const b = document.createElement('button');
+    b.className = 'pbtn';
+    b.dataset.video = './videos/teste.mp4';
+    b.dataset.title = 'Projeto teste';
+    b.textContent = '▶ Ver rodando';
+    document.querySelector('.pcard__actions').appendChild(b);
+  });
+  await page.locator('[data-video="./videos/teste.mp4"]').dispatchEvent('click');
+  const modal = page.locator('#videoModal');
+  await expect(modal).toBeVisible();
+  await expect(modal.locator('#videoTitle')).toHaveText('Projeto teste');
+  await expect(modal.locator('video')).toHaveAttribute('src', './videos/teste.mp4');
+  await expect(page.locator('html')).toHaveClass(/lenis-stopped/);
+
+  await page.keyboard.press('Escape');
+  await expect(modal).toBeHidden();
+  await expect(modal.locator('video')).not.toHaveAttribute('src', /./);
+  await expect(page.locator('html')).not.toHaveClass(/lenis-stopped/);
+});
+
+test('os 6 projetos têm "Ver rodando", e o vídeo e a capa de cada um existem', async ({ page, request }) => {
+  await page.goto('/');
+  const btns = page.locator('.pcard [data-video]');
+  await expect(btns).toHaveCount(6);
+  for (const b of await btns.all()) {
+    const [video, poster] = [await b.getAttribute('data-video'), await b.getAttribute('data-poster')];
+    for (const f of [video, poster]) expect((await request.head(f.replace('./', '/'))).status(), f).toBe(200);
+  }
+});
+
+test('o vídeo do Xepa toca no player', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('.pcard [data-video="./videos/xepa.mp4"]').dispatchEvent('click');
+  const v = page.locator('#videoModal video');
+  await expect(v).toHaveAttribute('poster', './videos/xepa.jpg');
+  // o vídeo carrega e tem a duração do roteiro (~32 s)
+  await expect.poll(() => v.evaluate((el) => el.duration)).toBeGreaterThan(25);
+});

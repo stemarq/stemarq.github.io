@@ -43,6 +43,7 @@ const number = (page) => page.locator('#repoCounter .repos__n');
 const sobreRepos = (page) => page.locator('.stat [data-gh="repos"]');
 
 test('número acompanha a API a cada carregamento (19 → 20 → 19), no rodapé e no "Sobre"', async ({ page }) => {
+  test.slow(); // três carregamentos da página inteira; sendo o primeiro teste, ainda pega o Vite compilando
   let repos = 19, calls = 0;
   await page.route(USERS_API, (r) => { calls++; return r.fulfill(json({ public_repos: repos })); });
 
@@ -191,7 +192,9 @@ test('resto da página funciona com a API do GitHub fora do ar', async ({ page, 
   await expect(page.locator('.stat b:not([data-gh])')).toHaveText(/^[1-9]\d*$/);
 
   // o que roda depois do contador no main.js continua de pé
-  await expect(page.locator('body')).toHaveClass(/has-cursor/);
+  // (o player dos vídeos é ligado depois do contador; o cursor do sistema não é escondido)
+  await expect(page.locator('#videoModal')).toHaveCount(1);
+  await expect(page.locator('body')).toHaveCSS('cursor', 'auto');
   await page.locator('#copyEmail').scrollIntoViewIfNeeded();
   await page.locator('#copyEmail').click();
   await expect(page.locator('#copyFeedback')).toHaveText('copiado ✓');

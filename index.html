@@ -19,15 +19,11 @@
   <!-- CENA 3D FIXA ATRÁS DA PÁGINA -->
   <canvas class="gl" id="gl" aria-hidden="true"></canvas>
 
-  <!-- CURSOR -->
-  <div class="cursor" id="cursor"><span class="cursor__label" id="cursorLabel"></span></div>
-  <div class="cursor-dot" id="cursorDot"></div>
-
   <div class="grain" aria-hidden="true"></div>
 
   <!-- NAV -->
   <header class="nav" id="nav">
-    <a href="#top" class="nav__logo" data-magnetic>SM<sup>®</sup></a>
+    <a href="#top" class="nav__logo">SM<sup>®</sup></a>
     <nav class="nav__links mono">
       <a href="#sobre" data-hover="Sobre">Sobre</a>
       <a href="#projetos" data-hover="Projetos">Projetos</a>
@@ -71,7 +67,7 @@
     <section class="about" id="sobre">
       <div class="section-tag mono"><span>01</span> Sobre mim</div>
       <div class="about__grid">
-        <div class="about__photo" data-cursor="Oi! 👋">
+        <div class="about__photo">
           <div class="about__photo-inner">
             <img src="./stephany-perfil.jpg" alt="Stephany Marques apresentando com microfone no Inteli" />
           </div>
@@ -97,7 +93,7 @@
       <div class="projects__head">
         <div class="section-tag mono"><span>02</span> Projetos selecionados</div>
         <h2 class="big-title"><span class="line"><span data-split>Coisas que</span></span><span class="line"><span data-split class="accent">eu construí</span></span></h2>
-        <p class="projects__hint mono">← arraste / role →</p>
+        <p class="projects__hint mono">Role a página para ver os projetos →<br/>Cada um tem o app rodando, o código e a documentação</p>
       </div>
       <div class="projects__pin" id="projectsPin">
         <div class="projects__track" id="projectsTrack"></div>
@@ -143,7 +139,7 @@
           <div><h4>Ferramentas</h4><p>Git · GitLab CI · GitHub Actions · Figma · Capacitor · Gemini API</p></div>
         </div>
       </div>
-      <div class="stack__sphere" id="sphere" data-cursor="Arraste"></div>
+      <div class="stack__sphere" id="sphere"></div>
     </section>
 
     <!-- VALUES -->
@@ -208,16 +204,16 @@
         <span class="line"><span data-split class="accent">algo juntos?</span></span>
       </h2>
       <div class="contact__row">
-        <a class="contact__cta" href="mailto:stemarq.contato@gmail.com" data-magnetic data-cursor="Enviar">
+        <a class="contact__cta" href="mailto:stemarq.contato@gmail.com">
           <span>Mande um e-mail</span>
           <svg viewBox="0 0 24 24" width="28" height="28"><path d="M5 19L19 5M19 5H8M19 5v11" fill="none" stroke="currentColor" stroke-width="2"/></svg>
         </a>
-        <button class="contact__copy mono" id="copyEmail" data-cursor="Copiar">stemarq.contato@gmail.com <span id="copyFeedback">⧉</span></button>
+        <button class="contact__copy mono" id="copyEmail">stemarq.contato@gmail.com <span id="copyFeedback">⧉</span></button>
       </div>
       <div class="socials">
-        <a href="https://www.linkedin.com/in/ste-marq" target="_blank" rel="noopener" class="social" data-cursor="Abrir"><span>LinkedIn</span><i>↗</i></a>
-        <a href="https://github.com/stemarq" target="_blank" rel="noopener" class="social" data-cursor="Abrir"><span>GitHub</span><i>↗</i></a>
-        <a href="https://www.instagram.com/ste.marq/" target="_blank" rel="noopener" class="social" data-cursor="Abrir"><span>Instagram</span><i>↗</i></a>
+        <a href="https://www.linkedin.com/in/ste-marq" target="_blank" rel="noopener" class="social"><span>LinkedIn</span><i>↗</i></a>
+        <a href="https://github.com/stemarq" target="_blank" rel="noopener" class="social"><span>GitHub</span><i>↗</i></a>
+        <a href="https://www.instagram.com/ste.marq/" target="_blank" rel="noopener" class="social"><span>Instagram</span><i>↗</i></a>
       </div>
     </section>
   </main>
@@ -231,6 +227,12 @@
       <a href="#top" id="toTop">Voltar ao topo ↑</a>
     </div>
   </footer>
+
+  <!-- PLAYER DOS VÍDEOS DOS PROJETOS -->
+  <dialog class="vmodal" id="videoModal" aria-labelledby="videoTitle">
+    <div class="vmodal__head mono"><span id="videoTitle" data-video-title></span><button type="button" data-video-close aria-label="Fechar vídeo">Fechar ✕</button></div>
+    <video controls playsinline preload="metadata"></video>
+  </dialog>
 
   <script type="module" src="/src/main.js"></script>
 </body>
