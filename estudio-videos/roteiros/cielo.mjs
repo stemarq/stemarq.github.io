@@ -1,5 +1,5 @@
 export default {
-  url: 'https://stemarq.github.io/jogo_cielo/', w: 1024, h: 768, sheetEvery: 2.5,
+  url: 'https://stemarq.github.io/jogo_cielo/', w: 1024, h: 768, scale: 2, sheetEvery: 3,
   async setup(ctx) {
     // só na gravação: renderizador Canvas (o WebGL do navegador sem janela é instável)
     await ctx.route('**/src/main.js', async (r) => {
@@ -9,15 +9,23 @@ export default {
   },
   async before(p) { await p.waitForTimeout(9000); },
   async run(p, h) {
-    await h.wait(1500);
-    await h.click(510, 590); await h.wait(9000);
+    h.mark('capa'); await h.wait(1500);
+    await h.click(510, 590); h.mark('intro'); await h.wait(9000);
+    h.mark('tutorial');
     for (let i = 0; i < 3; i++) { await h.click(730, 390); await h.wait(1800); }
-    await h.drag(500, 600, 500, 250, 60); await h.wait(1500);
+    h.mark('mapa'); await h.drag(500, 600, 500, 250, 60); await h.wait(1500);
     await h.click(753, 690); await h.wait(1500);          // padaria
-    await h.click(422, 444); await h.wait(5000);          // ENTRAR
-    for (let r = 0; r < 4; r++) {
+    await h.click(422, 444); h.mark('entrar'); await h.wait(5000);          // ENTRAR
+    // padaria: erra a 1ª de propósito (a satisfação cai), se recupera e acerta as outras até fechar a venda
+    // opções do Phaser em y = 340, 490, 640 (bakeryScene.js)
+    const escolhas = [340, 340, 640, 640];
+    for (let r = 0; r < escolhas.length; r++) {
+      h.mark('rodada' + r);
       for (let i = 0; i < 3; i++) { await h.click(560, 250); await h.wait(1600); } // avança fala
-      await h.click(700, 340); await h.wait(2500);        // escolhe a 1ª opção
+      await h.click(700, escolhas[r]); await h.wait(2600);
     }
+    h.mark('final');
+    for (let i = 0; i < 3; i++) { await h.click(560, 250); await h.wait(1800); }
+    h.mark('fim'); await h.wait(2000);
   },
 };

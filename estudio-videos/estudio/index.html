@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8" />
 <title>Estúdio de vídeos</title>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=block" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@600;700&family=Fredoka:wght@500;600;700&family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Pixelify+Sans:wght@500;700&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=block" rel="stylesheet" />
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
-  :root { --a: #d6ff3d; --a2: #9d7fe0; --base: #1a1030; --ink: #f4efff; --muted: rgba(244, 239, 255, .62); }
+  :root { --a: #d6ff3d; --a2: #9d7fe0; --base: #1a1030; --ink: #f4efff; --muted: rgba(244, 239, 255, .66); --head: 'Anton', sans-serif; }
   #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #07040c; font-family: 'Inter Tight', sans-serif; color: var(--ink); }
   #bg { position: absolute; inset: 0; background:
-      radial-gradient(70% 90% at 72% 45%, color-mix(in srgb, var(--base) 85%, var(--a) 15%) 0%, transparent 70%),
-      radial-gradient(60% 70% at 10% 100%, color-mix(in srgb, var(--a2) 22%, transparent) 0%, transparent 70%),
+      radial-gradient(70% 90% at 70% 45%, color-mix(in srgb, var(--base) 82%, var(--a) 18%) 0%, transparent 70%),
+      radial-gradient(60% 70% at 8% 100%, color-mix(in srgb, var(--a2) 24%, transparent) 0%, transparent 70%),
       linear-gradient(160deg, #0b0614 0%, var(--base) 55%, #07040c 100%); }
-  #grid { position: absolute; inset: -20%; opacity: .16;
+  #grid { position: absolute; inset: -20%; opacity: .14;
     background-image: linear-gradient(rgba(255,255,255,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.18) 1px, transparent 1px);
     background-size: 80px 80px; transform-origin: 50% 0; mask-image: radial-gradient(60% 60% at 50% 50%, #000 0%, transparent 75%); }
   canvas#gl { position: absolute; inset: 0; width: 1920px; height: 1080px; }
@@ -21,48 +21,95 @@
   .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: .02em; }
   .abs { position: absolute; will-change: transform, opacity; }
 
-  /* intro */
-  #intro { left: 0; right: 0; top: 330px; text-align: center; transform-style: preserve-3d; }
+  /* abertura */
+  #intro { left: 0; right: 0; top: 320px; text-align: center; transform-style: preserve-3d; }
   #introKicker { font-size: 26px; color: var(--a); text-transform: uppercase; margin-bottom: 18px; }
-  #introTitle { font-family: 'Anton', sans-serif; font-size: 230px; line-height: .95; text-transform: uppercase; white-space: nowrap; transform-style: preserve-3d; }
+  #introTitle { font-family: var(--head); font-size: 230px; line-height: .95; text-transform: uppercase; white-space: nowrap; transform-style: preserve-3d; }
   #introTitle span { display: inline-block; transform-origin: 50% 100%; }
-  #introYear { font-size: 22px; color: var(--muted); margin-top: 26px; }
+  #introSub { font-size: 40px; font-weight: 600; margin-top: 34px; }
+  #introYear { font-size: 22px; color: var(--muted); margin-top: 18px; }
 
-  /* cabeçalho fixo durante a demo */
-  #head { left: 110px; top: 92px; }
-  #headName { font-family: 'Anton', sans-serif; font-size: 92px; line-height: 1; text-transform: uppercase; color: var(--a); }
-  #headKind { font-size: 20px; color: var(--muted); margin-top: 12px; text-transform: uppercase; }
+  /* problema */
+  #prob { inset: 0; }
+  #probTitle { position: absolute; left: 110px; top: 96px; width: 1700px; font-size: 64px; font-weight: 800; letter-spacing: -.02em; line-height: 1.05; }
+  #probTitle small { display: block; font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 500; color: var(--a); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 18px; }
+  .card { position: absolute; width: 400px; padding: 30px 32px; font-size: 40px; line-height: 1.12; transform-origin: 50% 50%; box-shadow: 0 30px 60px rgba(0,0,0,.45); }
+  .card small { display: block; font-size: 20px; margin-top: 14px; opacity: .7; font-family: 'JetBrains Mono', monospace; line-height: 1.3; }
+  /* temas dos cartões */
+  .t-notas .card { font-family: 'Caveat', cursive; font-weight: 700; font-size: 54px; color: #2a1d08; border-radius: 4px; background: #ffe680; }
+  .t-notas .card:nth-child(4n+2) { background: #ffb8d9; } .t-notas .card:nth-child(4n+3) { background: #b8e4ff; } .t-notas .card:nth-child(4n+4) { background: #d6ff9d; }
+  .t-notas .card small { font-family: 'Inter Tight'; font-size: 20px; font-weight: 600; }
+  .t-kanban .card { border-radius: 18px; background: #f6f3ff; color: #1b1430; font-size: 32px; font-weight: 600; border-left: 10px solid #ff5d7a; }
+  .t-kanban .card small { color: #d43a57; opacity: 1; font-weight: 700; }
+  .t-kanban .card:nth-child(3n+2) { border-left-color: #ffb23d; } .t-kanban .card:nth-child(3n+2) small { color: #b56d00; }
+  .t-terminal .card { border-radius: 14px; background: #120a14; border: 2px solid rgba(255,255,255,.18); color: #f4efff; font-family: 'JetBrains Mono', monospace; font-size: 28px; line-height: 1.35; }
+  .t-terminal .card::before { content: '● ● ●'; display: block; font-size: 14px; letter-spacing: 4px; color: #ff7ad9; margin-bottom: 14px; }
+  .t-terminal .card small { color: #ff7ad9; opacity: 1; }
+  .t-pixel .card { font-family: 'Pixelify Sans', sans-serif; font-size: 36px; background: #fff8e6; color: #10203a; border: 6px solid #10203a; box-shadow: 10px 10px 0 #3dc3ff, 0 30px 60px rgba(0,0,0,.4); border-radius: 0; }
+  .t-pixel .card small { font-family: 'Pixelify Sans'; color: #c0392b; opacity: 1; font-size: 24px; }
+  .t-bolhas .card { font-family: 'Fredoka', sans-serif; font-weight: 600; border-radius: 40px; background: #fff; color: #3b2208; font-size: 40px; }
+  .t-bolhas .card:nth-child(3n+2) { background: #ffe0a3; } .t-bolhas .card:nth-child(3n+3) { background: #c6ecff; }
+  .t-bolhas .card small { font-family: 'Fredoka'; font-size: 22px; }
+  .t-papel .card { font-family: 'Fraunces', serif; font-weight: 600; font-size: 36px; color: #13241d; border-radius: 6px; background: #fbf8ef repeating-linear-gradient(#fbf8ef 0 46px, #cfe3f2 46px 48px); padding-top: 40px; border-left: 4px solid #ff8f8f; }
+  .t-papel .card small { font-family: 'Inter Tight'; font-weight: 600; color: #0f7a52; opacity: 1; }
+  #probAnswer { position: absolute; left: 0; right: 0; top: 860px; text-align: center; font-size: 54px; font-weight: 800; letter-spacing: -.01em; }
+  #probAnswer b { color: var(--a); }
 
-  #tagline { left: 110px; top: 300px; width: 860px; font-size: 76px; font-weight: 700; line-height: 1.04; letter-spacing: -.02em; }
-  #tagline .l { display: block; overflow: hidden; padding-bottom: 6px; }
-  #tagline .l span { display: inline-block; }
-  #tagline .l:last-child span { color: var(--a); }
-
-  #callouts { left: 110px; top: 560px; width: 700px; display: grid; gap: 22px; }
-  .co { display: flex; align-items: center; gap: 22px; padding: 22px 28px; border-radius: 22px;
-    background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .12); backdrop-filter: blur(8px);
-    font-size: 30px; font-weight: 500; line-height: 1.2; transform-origin: 0 50%; }
-  .co b { flex: none; width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; background: var(--a); color: #0a0510;
-    font-family: 'JetBrains Mono', monospace; font-size: 20px; }
-  .co.on { background: color-mix(in srgb, var(--a) 16%, rgba(255,255,255,.04)); border-color: color-mix(in srgb, var(--a) 60%, transparent); }
-
+  /* passos */
+  /* painel atrás da legenda: em notebook e tablet o zoom põe a tela do app por baixo dela */
+  #capPanel { left: 0; top: 0; bottom: 0; width: 860px; background: linear-gradient(90deg, color-mix(in srgb, var(--base) 55%, #05030a) 0%, color-mix(in srgb, var(--base) 55%, #05030a) 76%, transparent 100%); }
+  #brand { left: 110px; top: 84px; display: flex; align-items: baseline; gap: 18px; }
+  #brandName { font-family: var(--head); font-size: 54px; line-height: 1; text-transform: uppercase; color: var(--a); }
+  #brandKind { font-size: 18px; color: var(--muted); text-transform: uppercase; }
+  #cap { left: 110px; top: 300px; width: 660px; }
+  #capN { font-size: 24px; color: var(--a); margin-bottom: 26px; display: flex; align-items: center; gap: 16px; }
+  #capN i { display: inline-block; height: 2px; width: 60px; background: var(--a); }
+  #capT { font-size: 70px; font-weight: 800; line-height: 1.02; letter-spacing: -.025em; }
+  #capT .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 8px; margin-bottom: -8px; }
+  #capT .w span { display: inline-block; }
+  #capX { margin-top: 30px; font-size: 33px; line-height: 1.32; color: var(--muted); }
+  #capX b { color: var(--ink); font-weight: 600; }
+  #dots { left: 110px; top: 960px; display: flex; gap: 12px; }
+  #dots i { display: block; width: 46px; height: 6px; border-radius: 6px; background: rgba(255,255,255,.16); overflow: hidden; }
+  #dots i b { display: block; height: 100%; background: var(--a); transform-origin: 0 50%; }
   #badge { font-size: 17px; color: var(--muted); padding: 9px 16px; border-radius: 99px; border: 1px dashed rgba(255,255,255,.3); text-transform: uppercase; }
   #badge i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--a); margin-right: 10px; vertical-align: 1px; }
 
-  #stackWrap { left: 0; right: 0; top: 700px; text-align: center; }
+  /* por dentro */
+  #arch { inset: 0; }
+  #archTitle { position: absolute; left: 0; right: 0; top: 120px; text-align: center; font-size: 72px; font-weight: 800; letter-spacing: -.02em; }
+  #archTitle small { display: block; font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 500; color: var(--a); text-transform: uppercase; margin-bottom: 18px; }
+  #archRow { position: absolute; left: 0; right: 0; top: 400px; display: flex; justify-content: center; align-items: stretch; gap: 0; transform: perspective(1600px) rotateX(14deg); transform-style: preserve-3d; }
+  .node { width: 290px; padding: 30px 28px; border-radius: 26px; background: rgba(255,255,255,.07); border: 1.5px solid rgba(255,255,255,.2); backdrop-filter: blur(8px); text-align: left; }
+  .node b { display: block; font-size: 34px; font-weight: 800; letter-spacing: -.01em; }
+  .node span { display: block; margin-top: 12px; font-size: 22px; line-height: 1.3; color: var(--muted); }
+  .node em { display: inline-block; font-style: normal; font-family: 'JetBrains Mono', monospace; font-size: 16px; padding: 6px 12px; border-radius: 99px; background: var(--a); color: #0a0510; margin-bottom: 18px; }
+  .link { width: 60px; position: relative; align-self: center; height: 4px; }
+  .link::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, var(--a) 0 10px, transparent 10px 20px); background-position: var(--off, 0) 0; opacity: .8; }
+  .link i { position: absolute; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: var(--a); box-shadow: 0 0 22px var(--a); }
+  #archNote { position: absolute; left: 0; right: 0; top: 780px; text-align: center; font-size: 34px; color: var(--muted); }
+  #archNote b { color: var(--ink); }
+
+  /* números e tecnologias */
+  #nums { left: 0; right: 0; top: 230px; display: flex; justify-content: center; gap: 120px; }
+  .num { text-align: center; min-width: 280px; }
+  .num b { display: block; font-family: var(--head); font-size: 170px; line-height: 1; color: var(--a); }
+  .num span { display: block; margin-top: 14px; font-size: 30px; font-weight: 600; max-width: 380px; }
+  #stackWrap { left: 0; right: 0; top: 720px; text-align: center; }
   #stackTitle { font-size: 22px; color: var(--muted); text-transform: uppercase; margin-bottom: 26px; }
   #stack { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; padding: 0 160px; transform-style: preserve-3d; }
   #stack span { display: inline-block; padding: 18px 30px; border-radius: 99px; font-size: 30px; font-weight: 600; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.18); }
   #stack span:nth-child(3n+1) { border-color: var(--a); color: var(--a); }
 
-  #outro { left: 0; right: 0; top: 250px; text-align: center; }
-  #outroName { font-family: 'Anton', sans-serif; font-size: 200px; line-height: 1; text-transform: uppercase; color: var(--a); }
-  #outroCtaL { font-size: 26px; color: var(--muted); text-transform: uppercase; margin-top: 46px; }
-  #outroCta { display: inline-block; margin-top: 16px; font-size: 48px; font-weight: 600; padding: 20px 44px; border-radius: 99px; background: var(--a); color: #0a0510; }
-  #outroBy { margin-top: 80px; display: flex; justify-content: center; align-items: center; gap: 22px; font-size: 26px; }
+  /* encerramento */
+  #outro { left: 0; right: 0; top: 230px; text-align: center; }
+  #outroName { font-family: var(--head); font-size: 200px; line-height: 1; text-transform: uppercase; color: var(--a); }
+  #outroLine { font-size: 40px; font-weight: 600; margin-top: 26px; }
+  #outroCtaL { font-size: 24px; color: var(--muted); text-transform: uppercase; margin-top: 50px; }
+  #outroCta { display: inline-block; margin-top: 16px; font-size: 46px; font-weight: 700; padding: 20px 44px; border-radius: 99px; background: var(--a); color: #0a0510; }
+  #outroBy { margin-top: 70px; display: flex; justify-content: center; align-items: center; gap: 22px; font-size: 26px; }
   #outroBy .sm { width: 64px; height: 64px; border-radius: 16px; background: #0a0510; border: 2px solid var(--a); display: grid; place-items: center; font-family: 'Anton'; font-size: 28px; color: var(--a); }
   #outroBy small { display: block; color: var(--muted); font-size: 20px; margin-top: 4px; }
-  #flash { inset: 0; background: #fff; opacity: 0; }
 </style>
 </head>
 <body>
@@ -71,19 +118,23 @@
   <div id="grid"></div>
   <canvas id="gl" width="1920" height="1080"></canvas>
   <div id="ui">
-    <div id="intro" class="abs"><div id="introKicker" class="mono"></div><div id="introTitle"></div><div id="introYear" class="mono"></div></div>
-    <div id="head" class="abs"><div id="headName"></div><div id="headKind" class="mono"></div></div>
-    <div id="tagline" class="abs"></div>
-    <div id="callouts" class="abs"></div>
+    <div id="intro" class="abs"><div id="introKicker" class="mono"></div><div id="introTitle"></div><div id="introSub"></div><div id="introYear" class="mono"></div></div>
+    <div id="prob" class="abs"><div id="probTitle"></div><div id="cards"></div><div id="probAnswer"></div></div>
+    <div id="capPanel" class="abs"></div>
+    <div id="brand" class="abs"><div id="brandName"></div><div id="brandKind" class="mono"></div></div>
+    <div id="cap" class="abs"><div id="capN" class="mono"><i></i><span></span></div><div id="capT"></div><div id="capX"></div></div>
+    <div id="dots" class="abs"></div>
     <div id="badge" class="abs mono"><i></i><span></span></div>
+    <div id="arch" class="abs"><div id="archTitle"><small>Por dentro</small><span></span></div><div id="archRow"></div><div id="archNote"></div></div>
+    <div id="nums" class="abs"></div>
     <div id="stackWrap" class="abs"><div id="stackTitle" class="mono">Feito com</div><div id="stack"></div></div>
     <div id="outro" class="abs">
       <div id="outroName"></div>
+      <div id="outroLine"></div>
       <div id="outroCtaL" class="mono"></div>
       <div id="outroCta"></div>
       <div id="outroBy"><div class="sm">SM</div><div style="text-align:left">Stephany Marques<small class="mono">Full Stack Developer · stemarq.github.io</small></div></div>
     </div>
-    <div id="flash" class="abs"></div>
   </div>
 </div>
 <script type="importmap">{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/addons/": "/node_modules/three/examples/jsm/" } }</script>

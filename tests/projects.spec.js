@@ -8,6 +8,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('o cursor do sistema fica visível (sem cursor customizado)', async ({ page }) => {
+  test.slow(); // costuma ser o primeiro carregamento: ainda pega o Vite compilando
   await page.goto('/');
   await expect(page.locator('#cursor, .cursor-dot')).toHaveCount(0);
   await expect(page.locator('body')).not.toHaveClass(/has-cursor/);
@@ -69,7 +70,7 @@ test('o vídeo do Xepa toca no player', async ({ page }) => {
   const v = page.locator('#videoModal video');
   await expect(v).toHaveAttribute('poster', './videos/xepa.jpg');
   // o vídeo carrega e tem a duração do roteiro (~32 s)
-  await expect.poll(() => v.evaluate((el) => el.duration)).toBeGreaterThan(25);
+  await expect.poll(() => v.evaluate((el) => el.duration)).toBeGreaterThan(60);
 });
 
 // clique de verdade (não dispatchEvent): no desktop os cards ficam em 3D e algo na frente pode roubar o clique

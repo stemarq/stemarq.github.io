@@ -1,6 +1,6 @@
 const BASE = 'https://stemarq.github.io/DudyApp/';
 export default {
-  url: BASE + 'index.html', w: 390, h: 844, dpr: 2, mobile: true, sheetEvery: 2.5,
+  url: BASE + 'index.html', w: 390, h: 844, scale: 3, mobile: true, sheetEvery: 3,
   async setup(ctx) {
     // nada vai para o Supabase de produção: respostas vazias
     await ctx.route(/supabase\.co/, (r) => r.fulfill({ status: 200, contentType: 'application/json', body: r.request().method() === 'GET' ? '[]' : '{}' }));
@@ -8,15 +8,18 @@ export default {
   },
   async before(p) { await p.waitForTimeout(2000); },
   async run(p, h) {
-    await h.wait(2000);
-    await p.goto(BASE + 'telas/telaHome.html'); await h.wait(1800);
-    await h.tapText('Atividades'); await h.wait(2000);
+    h.mark('abertura'); await h.wait(2000);
+    await p.goto(BASE + 'telas/telaHome.html'); h.mark('home'); await h.wait(2500);
+    h.mark('licao'); await h.tapText('Atividades'); await h.wait(2000);
     await h.tapText('Comidas'); await h.wait(2500);
-    await h.tapText('Apple'); await h.wait(900);
-    await h.tapText('VERIFICAR'); await h.wait(2500);
-    await p.screenshot({ path: 'dd-after.png' });
+    // quatro tipos de pergunta da lição 1 (scriptAtividade.js): imagem, palavra, tradução e frase com o urso
+    const confere = async () => { await h.tapText('VERIFICAR'); await h.wait(2200); await h.tapText('CONTINUAR'); await h.wait(1500); };
+    h.mark('resposta'); await h.tapText('Apple', true); await h.wait(1000); await confere();
+    h.mark('palavra'); await h.tapText('Banana', true); await h.wait(1000); await confere();
+    h.mark('traduz'); await h.tap('input, textarea'); await p.keyboard.type('Laranja', { delay: 140 }); await h.wait(700); await confere();
+    h.mark('frase'); await h.tapText('Banana', true); await h.wait(1000); await confere();
     await p.goto(BASE + 'telas/telaHome.html'); await h.wait(1500);
-    await h.tapText('Jogos'); await h.wait(1800);
+    h.mark('jogos'); await h.tapText('Jogos'); await h.wait(1800);
     await h.tap('#jogo-memoria'); await h.wait(4200);
     // o jogo mostra todas as cartas antes de virar: memoriza as posições e depois forma os pares
     const srcs = await p.locator('.block img').evaluateAll((im) => im.map((i) => i.getAttribute('src')));
@@ -25,10 +28,8 @@ export default {
     const pairs = {}; srcs.forEach((s, i) => (pairs[s] ||= []).push(i));
     const flip = async (i) => { const bb = await p.locator('.block').nth(i).boundingBox(); await h.click(bb.x + bb.width / 2, bb.y + bb.height / 2); await h.wait(650); };
     let k = 0;
-    for (const [s, idx] of Object.entries(pairs)) { if (idx.length < 2 || k++ >= 5) continue; await flip(idx[0]); await flip(idx[1]); await h.wait(700); }
-    await h.wait(1500);
-    await p.goto(BASE + 'telas/historia.html?id=1'); await h.wait(3000);
-    await p.screenshot({ path: 'dd-hist.png' });
-    await h.scroll(300); await h.wait(2000);
+    for (const [s, idx] of Object.entries(pairs)) { if (idx.length < 2) continue; await flip(idx[0]); await flip(idx[1]); await h.wait(700); }
+    await h.wait(3500);
+    h.mark('fim'); await h.wait(1000);
   },
 };

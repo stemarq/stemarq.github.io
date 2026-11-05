@@ -8,8 +8,9 @@ const name = process.argv[2];
 const cfg = (await import(`./roteiros/${name}.mjs?${Date.now()}`)).default;
 const dir = `footage/${name}`;
 fs.rmSync(dir, { recursive: true, force: true }); fs.mkdirSync(dir, { recursive: true });
-const b = await chromium.launch({ channel: 'chromium', args: ['--autoplay-policy=no-user-gesture-required'] });
-const ctx = await b.newContext({ viewport: { width: cfg.w, height: cfg.h }, deviceScaleFactor: cfg.dpr || 1, isMobile: !!cfg.mobile, hasTouch: !!cfg.mobile, locale: 'pt-BR' });
+// cfg.scale: grava com mais pixels (2 = 2880×1800 num viewport 1440×900), para o zoom do vídeo ficar nítido
+const b = await chromium.launch({ channel: 'chromium', args: ['--autoplay-policy=no-user-gesture-required', ...(cfg.scale ? [`--force-device-scale-factor=${cfg.scale}`] : [])] });
+const ctx = await b.newContext({ viewport: { width: cfg.w, height: cfg.h }, ...(cfg.scale ? {} : { deviceScaleFactor: cfg.dpr || 1 }), isMobile: !!cfg.mobile, hasTouch: !!cfg.mobile, locale: 'pt-BR' });
 if (cfg.setup) await cfg.setup(ctx);
 const page = await ctx.newPage();
 page.on('pageerror', (e) => console.log('pageerror', e.message.slice(0, 160)));
@@ -19,20 +20,30 @@ const cdp = await ctx.newCDPSession(page);
 const frames = [];
 cdp.on('Page.screencastFrame', async (f) => {
   const i = frames.length;
-  frames.push(f.metadata.timestamp);
+  frames.push(Date.now() / 1000); // relógio da máquina, o mesmo dos marcadores e do cursor
   fs.writeFileSync(`${dir}/${String(i).padStart(5, '0')}.jpg`, Buffer.from(f.data, 'base64'));
   await cdp.send('Page.screencastFrameAck', { sessionId: f.sessionId }).catch(() => {});
 });
-await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 92, maxWidth: cfg.w * (cfg.dpr || 1), maxHeight: cfg.h * (cfg.dpr || 1), everyNthFrame: 1 });
+const K = cfg.scale || 1;
+await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 90, maxWidth: cfg.w * K, maxHeight: cfg.h * K, everyNthFrame: 1 });
 const t0 = Date.now();
 // cursor visível desenhado na página (o screencast não mostra o cursor do sistema)
+// marcadores: em que segundo da gravação começa cada passo (vira footage/<nome>.marks.json)
+const marks = {};
+// trilha do cursor e cliques (px do viewport): o estúdio usa para o zoom acompanhar a ação
+const trilha = []; let cx = cfg.w / 2, cy = cfg.h / 2;
+const ponto = (tipo = 'm') => trilha.push([Date.now() / 1000, Math.round(cx), Math.round(cy), tipo]);
 const helpers = {
+  mark: (nome) => { marks[nome] = Date.now() / 1000; },
   wait: (ms) => page.waitForTimeout(ms),
-  async move(x, y, steps = 25) { await page.mouse.move(x, y, { steps }); await page.evaluate(([x, y]) => window.__cur?.(x, y), [x, y]); },
-  async click(x, y) { await helpers.move(x, y); await page.waitForTimeout(250); await page.evaluate(() => window.__tap?.()); await page.mouse.click(x, y); },
+  async move(x, y, steps = 25) { ponto(); await page.mouse.move(x, y, { steps }); cx = x; cy = y; ponto(); await page.evaluate(([x, y]) => window.__cur?.(x, y), [x, y]); },
+  async click(x, y) { await helpers.move(x, y); await page.waitForTimeout(250); await page.evaluate(() => window.__tap?.()); ponto('c'); await page.mouse.click(x, y); },
   async drag(x1, y1, x2, y2, steps = 40) { await helpers.move(x1, y1); await page.mouse.down(); await page.mouse.move(x2, y2, { steps }); await page.evaluate(([x, y]) => window.__cur?.(x, y), [x2, y2]); await page.mouse.up(); },
   async scroll(dy, steps = 30) { for (let i = 0; i < steps; i++) { await page.mouse.wheel(0, dy / steps); await page.waitForTimeout(16); } },
-  async tapText(t, exact = false) { const bb = await page.getByText(t, { exact }).last().boundingBox(); await helpers.click(bb.x + bb.width / 2, bb.y + bb.height / 2); },
+  async tapText(t, exact = false) { const bb = await page.getByText(t, { exact }).filter({ visible: true }).last().boundingBox(); await helpers.click(bb.x + bb.width / 2, bb.y + bb.height / 2); },
+  // rola suavemente até o elemento ficar no meio da tela (e clica, no caso de alvo)
+  async ver(loc, bloco = 'center') { await loc.evaluate((el, b) => el.scrollIntoView({ behavior: 'smooth', block: b }), bloco); await page.waitForTimeout(1100); },
+  async alvo(loc) { await helpers.ver(loc); const bb = await loc.boundingBox(); await helpers.click(bb.x + bb.width / 2, bb.y + bb.height / 2); },
   async tap(sel) { const bb = await page.locator(sel).first().boundingBox(); await helpers.click(bb.x + bb.width / 2, bb.y + bb.height / 2); },
 };
 await page.addStyleTag({ content: '#__c{position:fixed;z-index:2147483647;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;background:rgba(255,255,255,.55);border:2px solid rgba(0,0,0,.6);pointer-events:none;transition:transform .15s;left:-50px;top:-50px}#__c.t{transform:scale(.6)}' }).catch(() => {});
@@ -46,16 +57,22 @@ const injectCursor = () => page.evaluate(() => {
 if (!cfg.noCursor) { await injectCursor(); page.on('load', async () => { await page.addStyleTag({ content: '#__c{position:fixed;z-index:2147483647;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;background:rgba(255,255,255,.55);border:2px solid rgba(0,0,0,.6);pointer-events:none;transition:transform .15s}#__c.t{transform:scale(.6)}' }).catch(() => {}); injectCursor(); }); }
 await cfg.run(page, helpers);
 await page.waitForTimeout(500);
+const tFim = Date.now() / 1000; // o último quadro dura até aqui (tela parada não gera quadros novos)
 await cdp.send('Page.stopScreencast');
 await b.close();
 // monta o vídeo respeitando o tempo real de cada quadro
 const lines = [];
 for (let i = 0; i < frames.length; i++) {
-  const d = i + 1 < frames.length ? frames[i + 1] - frames[i] : 0.04;
+  const d = i + 1 < frames.length ? frames[i + 1] - frames[i] : Math.max(0.04, tFim - frames[i]);
   lines.push(`file '${name}/${String(i).padStart(5, '0')}.jpg'`, `duration ${Math.max(d, 0.001).toFixed(4)}`);
 }
+// o concat do FFmpeg ignora a duração do último arquivo se ele não for repetido
+lines.push(`file '${name}/${String(frames.length - 1).padStart(5, '0')}.jpg'`);
 fs.writeFileSync(`footage/${name}.txt`, lines.join('\n'));
-const W = cfg.w * (cfg.dpr || 1), H = cfg.h * (cfg.dpr || 1);
-execFileSync(FF, ['-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', `footage/${name}.txt`, '-vf', `scale=${W}:${H}:force_original_aspect_ratio=decrease,pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2,fps=30,format=yuv420p`, '-c:v', 'libx264', '-crf', '16', '-preset', 'fast', `footage/${name}.mp4`]);
+const W = cfg.w * K, H = cfg.h * K;
+const ini = frames[0];
+fs.writeFileSync(`footage/${name}.cursor.json`, JSON.stringify({ w: cfg.w, h: cfg.h, pts: trilha.map(([t, x, y, k]) => [+(t - ini).toFixed(3), x, y, k]) }));
+fs.writeFileSync(`footage/${name}.marks.json`, JSON.stringify(Object.fromEntries(Object.entries(marks).map(([k, v]) => [k, +(v - ini).toFixed(2)])), null, 1));
+execFileSync(FF, ['-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', `footage/${name}.txt`, '-vf', `scale=${W}:${H}:force_original_aspect_ratio=decrease,pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2,fps=30,format=yuv420p`, '-c:v', 'libx264', '-crf', '14', '-preset', 'fast', `footage/${name}.mp4`]);
 execFileSync(FF, ['-v', 'error', '-y', '-i', `footage/${name}.mp4`, '-vf', `fps=1/${cfg.sheetEvery || 2},scale=${cfg.w > cfg.h ? 400 : 200}:-1,tile=6x4`, '-frames:v', '1', `footage/${name}-sheet.png`]);
 console.log(name, frames.length, 'quadros', ((Date.now() - t0) / 1000).toFixed(1) + 's');
