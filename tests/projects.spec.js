@@ -71,3 +71,27 @@ test('o vídeo do Xepa toca no player', async ({ page }) => {
   // o vídeo carrega e tem a duração do roteiro (~32 s)
   await expect.poll(() => v.evaluate((el) => el.duration)).toBeGreaterThan(25);
 });
+
+// clique de verdade (não dispatchEvent): no desktop os cards ficam em 3D e algo na frente pode roubar o clique
+for (const [w, h] of [[1440, 900], [390, 844]]) {
+  test(`${w}px: clicar em "Ver rodando" de cada card abre o player`, async ({ page }) => {
+    test.slow();
+    await page.setViewportSize({ width: w, height: h });
+    await page.goto('/');
+    for (const id of ['xepa', 'dashgit', 'cielo', 'gitia', 'dudy', 'genetools']) {
+      const btn = page.locator(`[data-video="./videos/${id}.mp4"]`);
+      // rola a página como uma pessoa até o botão aparecer (no desktop o trilho anda na horizontal)
+      for (let i = 0; i < 80; i++) {
+        const bb = await btn.boundingBox();
+        if (bb && bb.x > 0 && bb.x + bb.width < w && bb.y > 80 && bb.y + bb.height < h - 20) break;
+        await page.mouse.wheel(0, 250); await page.waitForTimeout(120);
+      }
+      await page.waitForTimeout(900); // o trilho anda com scrub: espera assentar
+      await btn.click({ trial: true }); // falha se outro elemento estiver por cima
+      await btn.click();
+      await expect(page.locator('#videoModal')).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(page.locator('#videoModal')).toBeHidden();
+    }
+  });
+}

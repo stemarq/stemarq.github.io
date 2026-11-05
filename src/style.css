@@ -367,8 +367,9 @@ section { position: relative; }
 
 /* ---------- 3D ---------- */
 .projects__pin { perspective: 1400px; perspective-origin: 50% 50%; }
-.projects__track { transform-style: preserve-3d; }
-.pcard { will-change: transform; }
+.projects__track { transform-style: preserve-3d; pointer-events: none; }
+/* os cards recuam em Z (carrossel 3D) e ficariam atrás do trilho: o trilho deixa o clique passar para eles */
+.pcard { will-change: transform; pointer-events: auto; }
 
 
 .footer { perspective: 700px; }
